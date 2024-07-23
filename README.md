@@ -31,7 +31,7 @@
 
 ## Deploy using Google Colab
 
-- Visit this [**LINK**](https://free.cyberurl.in/0vx4s) and follow on-screen instructions.
+- Visit this [**LINK**](https://shorturl.at/pCLN5) and follow on-screen instructions.
 
 ---
 ### Demo BOT available here: [**@Z_Mirror**](https://telegram.me/z_mirror).
