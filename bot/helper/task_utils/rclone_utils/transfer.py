@@ -122,7 +122,10 @@ class RcloneTransferHelper:
         files = await listdir("accounts")
         text = "".join(
             f"[sa{i:03}]\ntype = drive\nscope = drive\nservice_account_file = accounts/{sa}\n{option} = {gd_id}\n\n"
-            for i, sa in enumerate(files)
+            for (
+                i,
+                sa
+            ) in enumerate(files)
         )
 
         async with aiopen(
@@ -138,7 +141,10 @@ class RcloneTransferHelper:
             stdout=PIPE,
             stderr=PIPE
         )
-        _, return_code = await gather(
+        (
+            _,
+            return_code
+        ) = await gather(
             self._progress(),
             self._proc.wait()
         )
@@ -216,7 +222,10 @@ class RcloneTransferHelper:
                 LOGGER.info(f"Download with service account {remote}")
 
         cmd = self._getUpdatedCommand(
-            config_path, f"{remote}:{self._listener.link}", path, "copy"
+            config_path,
+            f"{remote}:{self._listener.link}",
+            path,
+            "copy"
         )
 
         if (
@@ -265,7 +274,11 @@ class RcloneTransferHelper:
             config_path,
             epath,
         ]
-        res, err, code = await cmd_exec(cmd)
+        (
+            res,
+            err,
+            code
+        ) = await cmd_exec(cmd)
 
         if code == 0:
             result = loads(res)
@@ -429,7 +442,9 @@ class RcloneTransferHelper:
             else "copy"
         )
         cmd = self._getUpdatedCommand(
-            fconfig_path, path, f"{fremote}:{rc_path}",
+            fconfig_path,
+            path,
+            f"{fremote}:{rc_path}",
             method,
             unwanted_files
         )
@@ -453,7 +468,10 @@ class RcloneTransferHelper:
             return
 
         if remote_type == "drive":
-            link, destination = await self._get_gdrive_link(
+            (
+                link,
+                destination
+            ) = await self._get_gdrive_link(
                 oconfig_path,
                 oremote,
                 rc_path,
@@ -474,7 +492,11 @@ class RcloneTransferHelper:
                 oconfig_path,
                 destination
             ]
-            res, err, code = await cmd_exec(cmd)
+            (
+                res,
+                err,
+                code
+            ) = await cmd_exec(cmd)
 
             if code == 0:
                 link = res
@@ -504,13 +526,19 @@ class RcloneTransferHelper:
 
     async def clone(self, config_path, src_remote, src_path, mime_type, method):
         destination = self._listener.upDest
-        dst_remote, dst_path = destination.split(
+        (
+            dst_remote,
+            dst_path
+        ) = destination.split(
             ":",
             1
         )
 
         try:
-            src_remote_opts, dst_remote_opt = await gather(
+            (
+                src_remote_opts,
+                dst_remote_opt
+            ) = await gather(
                 self._get_remote_options(
                     config_path,
                     src_remote
@@ -527,7 +555,10 @@ class RcloneTransferHelper:
                 None
             )
 
-        src_remote_type, dst_remote_type = (
+        (
+            src_remote_type,
+            dst_remote_type
+        ) = (
             src_remote_opts["type"],
             dst_remote_opt["type"],
         )
@@ -560,7 +591,10 @@ class RcloneTransferHelper:
             stdout=PIPE,
             stderr=PIPE
         )
-        _, return_code = await gather(
+        (
+            _,
+            return_code
+        ) = await gather(
             self._progress(),
             self._proc.wait()
         )
@@ -621,7 +655,11 @@ class RcloneTransferHelper:
                     config_path,
                     destination
                 ]
-                res, err, code = await cmd_exec(cmd)
+                (
+                    res,
+                    err,
+                    code
+                ) = await cmd_exec(cmd)
 
                 if self._listener.isCancelled:
                     return (
@@ -682,7 +720,10 @@ class RcloneTransferHelper:
             rcflags = rcflags.split("|")
             for flag in rcflags:
                 if ":" in flag:
-                    key, value = map(
+                    (
+                        key,
+                        value
+                    ) = map(
                         str.strip,
                         flag.split(
                             ":",

@@ -1,6 +1,5 @@
 from asyncio import gather
 from json import loads
-from re import T
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 from secrets import token_urlsafe
@@ -87,7 +86,7 @@ class Clone(TaskListener):
 
         args = {
             "link": "",
-            "-i": 0,
+            "-m": 0,
             "-b": False,
             "-up": "",
             "-rcf": "",
@@ -100,7 +99,7 @@ class Clone(TaskListener):
         )
 
         try:
-            self.multi = int(args["-i"])
+            self.multi = int(args["-m"])
         except:
             self.multi = 0
 
@@ -204,7 +203,13 @@ class Clone(TaskListener):
             or
             is_gdrive_id(self.link)
         ):
-            self.name, mime_type, self.size, files, _ = await sync_to_async(
+            (
+                self.name,
+                mime_type,
+                self.size,
+                files,
+                _
+            ) = await sync_to_async(
                 gdCount().count,
                 self.link,
                 self.userId
@@ -298,7 +303,10 @@ class Clone(TaskListener):
             else:
                 config_path = "rclone.conf"
 
-            remote, src_path = self.link.split(":", 1)
+            (
+                remote,
+                src_path
+            ) = self.link.split(":", 1)
             src_path = src_path.strip("/")
 
             cmd = [
@@ -405,7 +413,11 @@ class Clone(TaskListener):
                 config_path,
                 destination,
             ]
-            res1, res2, res3 = await gather(
+            (
+                res1,
+                res2,
+                res3
+            ) = await gather(
                 cmd_exec(cmd1),
                 cmd_exec(cmd2),
                 cmd_exec(cmd3),

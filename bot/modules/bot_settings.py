@@ -331,7 +331,10 @@ Timeout: 60 sec.
 
 
 async def update_buttons(message, key=None, edit_type=None):
-    msg, button = await get_buttons(
+    (
+        msg,
+        button
+    ) = await get_buttons(
         key,
         edit_type
     )
@@ -1046,7 +1049,8 @@ async def edit_bot_settings(client, query):
             return
         elif value and data[2] not in [
             "SEARCH_LIMIT",
-            "STATUS_LIMIT"
+            "STATUS_LIMIT",
+            "PLAYLIST_LIMIT"
         ] and data[2].endswith((
             "_THRESHOLD",
             "_LIMIT"
@@ -1400,7 +1404,10 @@ async def load_config():
         len(task_dict) != 0
         and (st := Intervals["status"])
     ):
-        for key, intvl in list(st.items()):
+        for (
+            key,
+            intvl
+        ) in list(st.items()):
             intvl.cancel()
             Intervals["status"][key] = setInterval(
                 STATUS_UPDATE_INTERVAL,
