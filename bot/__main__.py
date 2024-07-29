@@ -314,7 +314,7 @@ async def main():
             ping,
             filters=command(
                 BotCommands.PingCommand
-            ) & CustomFilters.authorized
+            ) & CustomFilters.sudo
         )
     )
     bot.add_handler( # type: ignore
