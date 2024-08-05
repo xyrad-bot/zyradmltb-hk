@@ -525,6 +525,8 @@ class TaskConfig:
                 ):
                     raise ValueError("You must use the same config to clone!")
         else:
+            if self.message.chat.type != self.message.chat.type.SUPERGROUP: # type: ignore
+                raise ValueError("Leech is not allowed in private!\nUse me in a supergroup!")
             self.upDest = (
                 self.upDest
                 or self.userDict.get("leech_dest")
@@ -589,7 +591,8 @@ class TaskConfig:
                         or not member.privileges.can_post_messages 
                     ):
                         raise ValueError(
-                            "I don't have enough privileges in this chat!"
+                            "I don't have enough privileges in the 'leech destination'!\n"
+                            "Allow me 'post messages' and 'manage chat' permissions!"
                         )
                 else:
                     try:
@@ -619,6 +622,7 @@ class TaskConfig:
                         ):
                             raise ValueError(
                                 "I don't have enough permission in LOG_CHAT_ID!"
+                                "Allow me 'post messages' and 'manage chat' permissions!"
                             )
 
                 if config_dict["DUMP_CHAT_ID"]:
@@ -640,6 +644,7 @@ class TaskConfig:
                         ):
                             raise ValueError(
                                 "I don't have enough permission in DUMP_CHAT_ID!"
+                                "Allow me 'post messages' and 'manage chat' permissions!"
                             )
 
             if self.splitSize:
