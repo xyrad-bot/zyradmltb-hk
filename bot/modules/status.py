@@ -69,8 +69,8 @@ async def mirror_status(_, message):
     if count == 0:
         currentTime = get_readable_time(time() - botStartTime) # type: ignore
         free = get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)
-        msg = "Stop it! Get some help!\n\nNo Active Tasks!\n\n"
-        msg += f"Each user can get status for his tasks by adding me or user_id after cmd: /{BotCommands.StatusCommand[0]} me\n\n"
+        msg = "Stop it!\nGet some help!\n\nNo Active Tasks!\n\n"
+        msg += f"Get your tasks status by adding me or user_id after cmd: /{BotCommands.StatusCommand[0]} me\n\n"
         msg += (
             f"\n<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {free}"
             f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {currentTime}"
@@ -326,19 +326,19 @@ async def stats(_, message, edit_mode=False):
                 f"<b>Total:</b> <code>{total}</code> | <b>Free:</b> <code>{free}</code>"
 
     buttons.ibutton(
-        "Sys Stats",
+        "ꜱʏꜱᴛᴇᴍ\nꜱᴛᴀᴛꜱ",
         "show_sys_stats"
     )
     buttons.ibutton(
-        "Repo Stats",
+        "ʀᴇᴘᴏ\nꜱᴛᴀᴛꜱ",
         "show_repo_stats"
     )
     buttons.ibutton(
-        "Bot Limits",
+        "ʙᴏᴛ\nʟɪᴍɪᴛꜱ",
         "show_bot_limits"
     )
     buttons.ibutton(
-        "Close",
+        "ᴄʟᴏꜱᴇ",
         "close_signal"
     )
     sbtns = buttons.build_menu(2)
@@ -361,19 +361,19 @@ async def send_bot_stats(_, query):
         edit_mode=True
     )
     buttons.ibutton(
-        "Sys Stats",
+        "ꜱʏꜱᴛᴇᴍ\nꜱᴛᴀᴛꜱ",
         "show_sys_stats"
     )
     buttons.ibutton(
-        "Repo Stats",
+        "ʀᴇᴘᴏ\nꜱᴛᴀᴛꜱ",
         "show_repo_stats"
     )
     buttons.ibutton(
-        "Bot Limits",
+        "ʙᴏᴛ\nʟɪᴍɪᴛꜱ",
         "show_bot_limits"
     )
     buttons.ibutton(
-        "Close",
+        "ᴄʟᴏꜱᴇ",
         "close_signal"
     )
     sbtns = buttons.build_menu(2)
@@ -395,19 +395,19 @@ async def send_sys_stats(_, query):
         edit_mode=True
     )
     buttons.ibutton(
-        "Bot Stats",
+        "ʙᴏᴛ\nꜱᴛᴀᴛꜱ",
         "show_bot_stats"
     )
     buttons.ibutton(
-        "Repo Stats",
+        "ʀᴇᴘᴏ\nꜱᴛᴀᴛꜱ",
         "show_repo_stats"
     )
     buttons.ibutton(
-        "Bot Limits",
+        "ʙᴏᴛ\nʟɪᴍɪᴛꜱ",
         "show_bot_limits"
     )
     buttons.ibutton(
-        "Close",
+        "ᴄʟᴏꜱᴇ",
         "close_signal"
     )
     sbtns = buttons.build_menu(2)
@@ -504,19 +504,19 @@ async def send_repo_stats(_, query):
                  f"<b>{update_info}</b>"
 
     buttons.ibutton(
-        "Bot Stats", 
+        "ʙᴏᴛ\nꜱᴛᴀᴛꜱ", 
         "show_bot_stats"
     )
     buttons.ibutton(
-        "Sys Stats",
+        "ꜱʏꜱᴛᴇᴍ\nꜱᴛᴀᴛꜱ",
         "show_sys_stats"
     )
     buttons.ibutton(
-        "Bot Limits",
+        "ʙᴏᴛ\nʟɪᴍɪᴛꜱ",
         "show_bot_limits"
     )
     buttons.ibutton(
-        "Close",
+        "ᴄʟᴏꜱᴇ",
         "close_signal"
     )
     sbtns = buttons.build_menu(2)
@@ -555,19 +555,19 @@ async def send_bot_limits(_, query):
                 f"<code>Bot Tasks : {BMT}</code>"
 
     buttons.ibutton(
-        "Bot Stats",
+        "ʙᴏᴛ\nꜱᴛᴀᴛꜱ",
         "show_bot_stats"
     )
     buttons.ibutton(
-        "Sys Stats",
+        "ꜱʏꜱᴛᴇᴍ\nꜱᴛᴀᴛꜱ",
         "show_sys_stats"
     )
     buttons.ibutton(
-        "Repo Stats",
+        "ʀᴇᴘᴏ\nꜱᴛᴀᴛꜱ",
         "show_repo_stats"
     )
     buttons.ibutton(
-        "Close",
+        "ᴄʟᴏꜱᴇ",
         "close_signal"
     )
     sbtns = buttons.build_menu(2)
