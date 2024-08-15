@@ -470,7 +470,8 @@ bot.add_handler( # type: ignore
     MessageHandler(
         clone,
         filters=command(
-            BotCommands.CloneCommand
+            BotCommands.CloneCommand,
+            case_sensitive=True
         ) & CustomFilters.authorized
     )
 )

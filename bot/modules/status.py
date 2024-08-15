@@ -591,8 +591,19 @@ bot.add_handler( # type: ignore
     MessageHandler(
         stats,
         filters=command(
-            BotCommands.StatsCommand
+            BotCommands.StatsCommand,
+            case_sensitive=True
         ) & CustomFilters.authorized
+    )
+)
+
+bot.add_handler( # type: ignore
+    MessageHandler(
+        mirror_status,
+        filters=command(
+            BotCommands.StatusCommand,
+            case_sensitive=True
+        ) & CustomFilters.authorized,
     )
 )
 
@@ -638,15 +649,6 @@ bot.add_handler( # type: ignore
         filters=regex(
             "^show_bot_limits"
         )
-    )
-)
-
-bot.add_handler( # type: ignore
-    MessageHandler(
-        mirror_status,
-        filters=command(
-            BotCommands.StatusCommand
-        ) & CustomFilters.authorized,
     )
 )
 

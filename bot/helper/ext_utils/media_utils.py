@@ -400,6 +400,8 @@ async def take_ss(video_file, ss_nb) -> bool:
                 "1",
                 "-frames:v",
                 "1",
+                "-threads",
+                f"{cpu_count() // 2}", # type: ignore
                 output,
             ]
             cap_time += interval
@@ -454,6 +456,8 @@ async def get_audio_thumb(audio_file):
         "-an",
         "-vcodec",
         "copy",
+        "-threads",
+        f"{cpu_count() // 2}", # type: ignore
         des_dir,
     ]
     (
@@ -497,6 +501,8 @@ async def create_thumbnail(video_file, duration):
         "thumbnail",
         "-frames:v",
         "1",
+        "-threads",
+        f"{cpu_count() // 2}", # type: ignore
         des_dir,
     ]
     try:

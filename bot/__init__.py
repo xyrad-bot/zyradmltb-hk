@@ -8,6 +8,7 @@ from asyncio import (
     Lock,
     get_event_loop
 )
+from concurrent.futures import ThreadPoolExecutor
 from dotenv import (
     load_dotenv,
     dotenv_values
@@ -39,6 +40,7 @@ from subprocess import (
     check_output,
     run as hrun
 )
+from sys import exit
 from time import time
 from tzlocal import get_localzone
 from uvloop import install
@@ -59,6 +61,8 @@ getLogger("pyrogram").setLevel(ERROR)
 
 botStartTime = time()
 bot_loop = get_event_loop()
+THREADPOOL = ThreadPoolExecutor(max_workers=99999)
+bot_loop.set_default_executor(THREADPOOL)
 
 basicConfig(
     format="%(levelname)s | From %(name)s -> %(module)s line no: %(lineno)d | %(message)s",
@@ -1203,6 +1207,7 @@ bot = tgClient(
     app_version="@Z_Mirror Session",
     device_model="@Z_Mirror Bot",
     system_version="@Z_Mirror Server",
+    workers=99999,
 ).start()
 
 BASE += ("oAtiUyppVYRQkuWg8DG2p")

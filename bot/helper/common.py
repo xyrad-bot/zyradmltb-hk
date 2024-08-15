@@ -233,13 +233,11 @@ class TaskConfig:
     async def isTokenExists(self, path, status):
         if is_rclone_path(path):
             config_path = self.getConfigPath(path)
-
             if (
                 config_path != "rclone.conf"
                 and status == "up"
             ):
                 self.privateLink = True
-
             if not await aiopath.exists(config_path):
                 raise ValueError(f"Rclone Config: {config_path} not Exists!")
 
@@ -398,6 +396,11 @@ class TaskConfig:
         ]:
             if (
                 not self.isYtDlp
+                and (
+                    is_gdrive_id(self.link)
+                    or is_rclone_path(self.link)
+                    or is_gdrive_link(self.link)
+                )
             ):
                 await self.isTokenExists(
                     self.link,
