@@ -477,7 +477,7 @@ async def edit_variable(message, pre_message, key):
     elif key == "RSS_DELAY":
         addJob()
     elif key == "SET_COMMANDS":
-        await set_commands(client)
+        await set_commands(bot)
 
 
 async def edit_aria(message, pre_message, key):
