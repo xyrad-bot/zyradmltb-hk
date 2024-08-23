@@ -32,7 +32,7 @@ from os import (
 )
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from pyrogram import Client as tgClient
+from nekozee import Client as tgClient
 from qbittorrentapi import Client as qbClient
 from socket import setdefaulttimeout
 from subprocess import (
@@ -57,7 +57,7 @@ getLogger("urllib3").setLevel(INFO)
 getLogger("apscheduler").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 getLogger("pymongo").setLevel(ERROR)
-getLogger("pyrogram").setLevel(ERROR)
+getLogger("nekozee").setLevel(ERROR)
 
 botStartTime = time()
 bot_loop = get_event_loop()
@@ -266,7 +266,6 @@ if len(USER_SESSION_STRING) != 0:
             app_version="@Z_Mirror Session",
             device_model="@Z_Mirror Bot",
             system_version="@Z_Mirror Server",
-            max_concurrent_transmissions=10,
         ).start()
         IS_PREMIUM_USER = user.me.is_premium # type: ignore
         log_info(f"Successfully logged into @{user.me.username} DC: {user.session.dc_id}.") # type: ignore
@@ -1208,7 +1207,6 @@ bot = tgClient(
     app_version="@Z_Mirror Session",
     device_model="@Z_Mirror Bot",
     system_version="@Z_Mirror Server",
-    max_concurrent_transmissions=10,
 ).start()
 
 BASE += ("oAtiUyppVYRQkuWg8DG2p")
