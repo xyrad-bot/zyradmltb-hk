@@ -594,12 +594,12 @@ class TaskListener(TaskConfig):
                         share_url = f"{INDEX_URL}findpath?id={dir_id}"
                         if mime_type == "Folder":
                             buttons.ubutton(
-                                "ᴅɪʀᴇᴄᴛ\nꜰɪʟᴇ ʟɪɴᴋ",
+                                "ᴅɪʀᴇᴄᴛ\nꜰᴏʟᴅᴇʀ ʟɪɴᴋ",
                                 share_url
                             )
                         else:
                             buttons.ubutton(
-                                "ᴅɪʀᴇᴄᴛ\nꜰᴏʟᴅᴇʀ ʟɪɴᴋ",
+                                "ᴅɪʀᴇᴄᴛ\nꜰɪʟᴇ ʟɪɴᴋ",
                                 share_url
                             )
                             if mime_type.startswith(
