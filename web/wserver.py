@@ -852,25 +852,83 @@ def set_priority(id_):
 @app.route("/")
 def homepage():
     return """
-    <h1>Ketentuan Layanan</h1>
+    <html>
+    <head>
+        <title>Ketentuan Layanan</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+                color: #333;
+            }
+            .container {
+                max-width: 800px;
+                margin: 50px auto;
+                padding: 20px;
+                background-color: #ffffff;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+            h1 {
+                font-family: 'Montserrat', sans-serif;
+                color: #2c3e50;
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+            p {
+                font-family: 'Open Sans', sans-serif;
+                font-size: 18px;
+                line-height: 1.6;
+                margin-bottom: 20px;
+            }
+            .image-container {
+                margin-top: 30px;
+                text-align: center;
+            }
+            .image-container img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+            footer {
+                margin-top: 50px;
+                font-size: 14px;
+                color: #777;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Ketentuan Layanan</h1>
 
-    <p style='font-size: 18px;'>
-    All activities conducted using this bot are solely the responsibility of the user. 
-    Any suspicious or illegal activities carried out with the help of this bot are strictly beyond my control 
-    and accountability. Users are expected to comply with all applicable laws and regulations while using this service. 
-    The host and creator of this bot bear no liability for any misuse or unethical behavior by its users.
-    </p>
+            <p>
+                All activities conducted using this bot are solely the responsibility of the user. 
+                Any suspicious or illegal activities carried out with the help of this bot are strictly beyond my control 
+                and accountability. Users are expected to comply with all applicable laws and regulations while using this service. 
+                The host and creator of this bot bear no liability for any misuse or unethical behavior by its users.
+            </p>
 
-    <p style='font-size: 18px;'>
-    Seluruh aktivitas yang dilakukan menggunakan bot ini sepenuhnya merupakan tanggung jawab pengguna. 
-    Setiap aktivitas mencurigakan atau ilegal yang dilakukan dengan bantuan bot ini sepenuhnya di luar kendali 
-    dan tanggung jawab saya. Pengguna diharapkan untuk mematuhi semua hukum dan peraturan yang berlaku saat menggunakan layanan ini. 
-    Host dan pembuat bot ini tidak bertanggung jawab atas penyalahgunaan atau perilaku tidak etis oleh penggunanya.
-    </p>
+            <p>
+                Seluruh aktivitas yang dilakukan menggunakan bot ini sepenuhnya merupakan tanggung jawab pengguna. 
+                Setiap aktivitas mencurigakan atau ilegal yang dilakukan dengan bantuan bot ini sepenuhnya di luar kendali 
+                dan tanggung jawab saya. Pengguna diharapkan untuk mematuhi semua hukum dan peraturan yang berlaku saat menggunakan layanan ini. 
+                Host dan pembuat bot ini tidak bertanggung jawab atas penyalahgunaan atau perilaku tidak etis oleh penggunanya.
+            </p>
 
-    <div style='text-align: center; margin-top: 20px;'>
-        <img src='https://i.pinimg.com/736x/1e/14/bd/1e14bd30958c53c77ba9f79a860a0478.jpg' alt='xyradcloudlogo.png' style='width: 300px; height: auto;'>
-    </div>
+            <div class="image-container">
+                <img src="https://i.pinimg.com/736x/1e/14/bd/1e14bd30958c53c77ba9f79a860a0478.jpg" alt="xyradcloudlogo">
+            </div>
+            
+            <footer>
+                &copy; 2024 zyradaex🐉. All Rights Reserved.
+            </footer>
+        </div>
+    </body>
+    </html>
     """
 
 
