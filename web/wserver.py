@@ -851,7 +851,7 @@ def set_priority(id_):
 
 @app.route("/")
 def homepage():
-    return "<h1>Bot Is <a href='https://telegram.me/xyradelw'>Online, </a>Host & Present By <a href='https://telegram.me/u_xyzp'>zyradaex🐉</a></h1>"
+    return "<h1>Bot Is <a href='https://telegram.me/xyradelw'>Online, </a>Host & Present By <a href='https://telegram.me/u_xzyp'>zyradaex🐉</a></h1>"
 
 
 @app.errorhandler(Exception)
