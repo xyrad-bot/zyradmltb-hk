@@ -851,7 +851,24 @@ def set_priority(id_):
 
 @app.route("/")
 def homepage():
-    return "<h1>Bot Is <a href='https://telegram.me/xyradelw'>Online, </a>Host & Present By <a href='https://telegram.me/u_xzyp'>zyradaex🐉</a></h1>"
+    return """
+    <h1>Bot Is <a href='https://telegram.me/xyradelw'>Online,</a> 
+    Hosted & Presented By <a href='https://telegram.me/u_xzyp'>zyradaex🐉</a></h1>
+
+    <p>All activities conducted using this bot are solely the responsibility of the user. 
+    Any suspicious or illegal activities carried out with the help of this bot are strictly beyond my control 
+    and accountability. Users are expected to comply with all applicable laws and regulations while using this service. 
+    The host and creator of this bot bear no liability for any misuse or unethical behavior by its users.</p>
+
+    <p>Seluruh aktivitas yang dilakukan menggunakan bot ini sepenuhnya merupakan tanggung jawab pengguna. 
+    Setiap aktivitas mencurigakan atau ilegal yang dilakukan dengan bantuan bot ini sepenuhnya di luar kendali 
+    dan tanggung jawab saya. Pengguna diharapkan untuk mematuhi semua hukum dan peraturan yang berlaku saat menggunakan layanan ini. 
+    Host dan pembuat bot ini tidak bertanggung jawab atas penyalahgunaan atau perilaku tidak etis oleh penggunanya.</p>
+
+    <div style='text-align: center;'>
+        <img src='https://i.pinimg.com/736x/1e/14/bd/1e14bd30958c53c77ba9f79a860a0478.jpg' alt='xyradcloud' style='width:300px;height:auto;'>
+    </div>
+    """
 
 
 @app.errorhandler(Exception)
