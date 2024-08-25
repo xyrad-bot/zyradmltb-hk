@@ -855,34 +855,40 @@ def homepage():
     <html>
     <head>
         <title>Ketentuan Layanan</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-            body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                background-color: #f4f4f4;
+            html, body {
+                height: 100%;
                 margin: 0;
                 padding: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f4f4f4;
                 color: #333;
+                display: flex;
+                flex-direction: column;
             }
             .container {
-                max-width: 800px;
-                margin: 50px auto;
+                max-width: 90%;
+                margin: auto;
                 padding: 20px;
                 background-color: #ffffff;
                 border-radius: 10px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 text-align: center;
+                flex-grow: 1;
             }
             h1 {
                 font-family: 'Montserrat', sans-serif;
                 color: #2c3e50;
-                font-size: 32px;
+                font-size: 6vw; /* Responsive font size */
                 margin-bottom: 20px;
             }
             p {
                 font-family: 'Open Sans', sans-serif;
-                font-size: 18px;
+                font-size: 4.5vw; /* Responsive font size */
                 line-height: 1.6;
-                margin-bottom: 20px;
+                margin: 20px 0; /* Consistent spacing */
+                text-align: justify;
             }
             .image-container {
                 margin-top: 30px;
@@ -895,9 +901,23 @@ def homepage():
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             }
             footer {
-                margin-top: 50px;
-                font-size: 14px;
+                font-size: 3.5vw; /* Responsive font size */
                 color: #777;
+                text-align: center;
+                margin-top: 20px;
+                padding: 10px;
+                background-color: #e9e9e9;
+            }
+            @media (min-width: 768px) {
+                h1 {
+                    font-size: 32px; /* Larger font for tablets and desktops */
+                }
+                p {
+                    font-size: 18px; /* Larger font for tablets and desktops */
+                }
+                footer {
+                    font-size: 14px; /* Larger font for tablets and desktops */
+                }
             }
         </style>
     </head>
@@ -922,11 +942,11 @@ def homepage():
             <div class="image-container">
                 <img src="https://i.pinimg.com/736x/1e/14/bd/1e14bd30958c53c77ba9f79a860a0478.jpg" alt="xyradcloudlogo">
             </div>
-            
-            <footer>
-                &copy; 2024 zyradaex🐉. All Rights Reserved.
-            </footer>
         </div>
+        
+        <footer>
+            &copy; 2024 zyradaex🐉. All Rights Reserved.
+        </footer>
     </body>
     </html>
     """
