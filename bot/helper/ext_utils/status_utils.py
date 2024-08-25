@@ -252,15 +252,15 @@ async def get_readable_message(
             and int(config_dict["AUTO_DELETE_MESSAGE_DURATION"]) > 0
         ):
             msg += (
-                f"<b><i>\n#Zee{index + start_position}: "
-                f"{escape(f"{task.name()}")}\n</i></b>"
+                f"<b>\n{index + start_position}. "
+                f"<i>{escape(f"{task.name()}")}\n</i></b>"
                 if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"\n<b>#Zee{index + start_position}...(Processing)</b>"
+                else f"\n<b>{index + start_position}.<i> Tugas Diproses...</i></b>"
             )
         else:
             msg += (
-                f"<b><i>\n#Zee{index + start_position}: "
-                f"{escape(f"{task.name()}")}\n</i></b>"
+                f"<b>\n{index + start_position}. "
+                f"<i>{escape(f"{task.name()}")}\n</i></b>"
             )
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
@@ -318,7 +318,7 @@ async def get_readable_message(
                 f"\n<code>UserID :</code> ||{task.listener.userId}||"
                 f"\n<code>Engine :</code> {task.engine}"
             )
-        msg += f"\n⚠️ {cancel_task}\n\n"
+        msg += f"\n✘ {cancel_task}\n\n"
 
     if len(msg) == 0:
         if status == "All":
@@ -392,7 +392,8 @@ async def get_readable_message(
                 )
     button = buttons.build_menu(8)
     msg += (
-        "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
+    	f"<b>Powered by @xyradelw</b>"
+        "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
         f"<b>CPU</b>: {cpu_percent()}% | "
         f"<b>FREE</b>: {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}\n"
         f"<b>RAM</b>: {virtual_memory().percent}% | "
