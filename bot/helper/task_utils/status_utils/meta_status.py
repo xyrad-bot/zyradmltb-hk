@@ -1,15 +1,14 @@
 from bot import (
     LOGGER,
+    pkg_info,
     subprocess_lock
 )
 from bot.helper.ext_utils.status_utils import (
     get_readable_file_size,
-    get_readable_time,
     MirrorStatus
 )
 from subprocess import run as frun
 from time import time
-from bot.helper.ext_utils.files_utils import get_path_size
 
 
 class MetaStatus:
@@ -28,7 +27,7 @@ class MetaStatus:
     def _eng_ver(self):
         _engine = frun(
             [
-                "ffmpeg",
+                pkg_info["pkgs"][2],
                 "-version"
             ],
             capture_output=True,
