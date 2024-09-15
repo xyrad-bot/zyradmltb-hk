@@ -32,7 +32,7 @@ from os import (
 )
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from pyrogram import Client as tgClient
+from nekozee import Client as tgClient
 from qbittorrentapi import Client as qbClient
 from socket import setdefaulttimeout
 from subprocess import (
@@ -57,7 +57,7 @@ getLogger("urllib3").setLevel(INFO)
 getLogger("apscheduler").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 getLogger("pymongo").setLevel(ERROR)
-getLogger("pyrogram").setLevel(ERROR)
+getLogger("nekozee").setLevel(ERROR)
 
 botStartTime = time()
 bot_loop = get_event_loop()
