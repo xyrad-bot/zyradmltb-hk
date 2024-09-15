@@ -17,11 +17,11 @@ from os import (
     walk,
     path as ospath
 )
-from nekozee.errors import (
+from pyrogram.errors import (
     FloodWait,
     RPCError
 )
-from nekozee.types import (
+from pyrogram.types import (
     InputMediaVideo,
     InputMediaDocument,
     InputMediaPhoto

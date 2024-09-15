@@ -1,6 +1,6 @@
 from io import BytesIO
-from nekozee.filters import command
-from nekozee.handlers import (
+from pyrogram.filters import command
+from pyrogram.handlers import (
     MessageHandler,
     EditedMessageHandler
 )

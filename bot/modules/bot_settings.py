@@ -18,12 +18,12 @@ from os import (
     getcwd
 )
 
-from nekozee import filters
-from nekozee.handlers import (
+from pyrogram import filters
+from pyrogram.handlers import (
     MessageHandler,
     CallbackQueryHandler
 )
-from nekozee.errors import (
+from pyrogram.errors import (
     ListenerTimeout,
     ListenerStopped
 )

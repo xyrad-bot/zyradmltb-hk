@@ -1,10 +1,10 @@
 from html import escape
 from httpx import AsyncClient
-from nekozee.filters import (
+from pyrogram.filters import (
     command,
     regex
 )
-from nekozee.handlers import (
+from pyrogram.handlers import (
     MessageHandler,
     CallbackQueryHandler
 )

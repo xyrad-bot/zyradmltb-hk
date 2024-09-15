@@ -6,8 +6,8 @@ from os import (
     getcwd,
     chdir
 )
-from nekozee.filters import command
-from nekozee.handlers import MessageHandler
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 from textwrap import indent
 from traceback import format_exc
 

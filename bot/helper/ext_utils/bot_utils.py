@@ -7,7 +7,7 @@ from asyncio import (
 from asyncio.subprocess import PIPE
 from functools import partial, wraps
 
-from nekozee.types import BotCommand
+from pyrogram.types import BotCommand
 from httpx import AsyncClient
 
 from bot import (

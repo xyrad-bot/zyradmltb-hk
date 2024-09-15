@@ -18,7 +18,7 @@ from aioshutil import (
     move,
     copy2
 )
-from nekozee.enums import ChatAction
+from pyrogram.enums import ChatAction
 from re import sub, I
 
 from bot import (
