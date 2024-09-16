@@ -257,8 +257,8 @@ def bot_sys_stats():
     bmsg += f"R: {ramp}% | "
     bmsg += f"S: {swap}% | "
     bmsg += f"D: {disk}%\n\n"
-    bmsg += f"Bandwidth Used: {traf}\n"
-    bmsg += f"Tidak Menerima Complain"
+    bmsg += f"Bandwidth: {traf}\n"
+    bmsg += f"Don't complain too much!!"
     return bmsg
 
 

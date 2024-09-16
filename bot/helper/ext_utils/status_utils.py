@@ -244,7 +244,7 @@ async def get_readable_message(
         )
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
         cancel_task = (
-            f"<b>/{BotCommands.CancelTaskCommand[1]}_{task.gid()}</b>"
+            f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
             if not task.listener.getChat.has_protected_content
             else f"<b>/{BotCommands.CancelTaskCommand[1]}_{task.gid()}</b>"
         )
@@ -254,15 +254,13 @@ async def get_readable_message(
             and int(config_dict["AUTO_DELETE_MESSAGE_DURATION"]) > 0
         ):
             msg += (
-                f"<b>\n{index + start_position}. "
-                f"<i>{escape(f"{task.name()}")}\n</i></b>"
+                f"<code>{escape(f"{task.name()}")}</code>\n"
                 if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"\n<b>{index + start_position}.<i> Tugas Diproses...</i></b>"
+                else f"<code>On Going Task...</code>\n"
             )
         else:
             msg += (
-                f"<b>\n{index + start_position}. "
-                f"<i>{escape(f"{task.name()}")}\n</i></b>"
+                f"<code>{escape(f"{task.name()}")}</code>\n"
             )
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
@@ -281,10 +279,8 @@ async def get_readable_message(
                 f"\n<code>Done   :</code> {task.processed_bytes()} of {task.size()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
                 f"\n<code>ETA    :</code> {task.eta()}"
-                f"\n<code>Past   :</code> {elapsed}"
                 f"\n<code>User   :</code> <b>{user_tag}</b>"
                 f"\n<code>UserID :</code> ||{task.listener.userId}||"
-                f"\n<code>Upload :</code> {task.listener.mode}"
                 f"\n<code>Engine :</code> <b><i>{task.engine}</i></b>"
             )
             if hasattr(
@@ -322,7 +318,7 @@ async def get_readable_message(
                 f"\n<code>UserID :</code> ||{task.listener.userId}||"
                 f"\n<code>Engine :</code> {task.engine}"
             )
-        msg += f"\n✘ {cancel_task}\n\n"
+        msg += f"\n{cancel_task}\n\n"
 
     if len(msg) == 0:
         if status == "All":
@@ -396,7 +392,6 @@ async def get_readable_message(
                 )
     button = buttons.build_menu(8)
     msg += (
-    	f"<b>Powered by @xyradelw</b>"
         "\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n"
         f"<b>CPU</b>: {cpu_percent()}% | "
         f"<b>FREE</b>: {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}\n"

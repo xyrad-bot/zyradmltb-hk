@@ -358,38 +358,20 @@ async def get_user_settings(from_user):
     )
 
     text = f"""
-<u>Settings for {name}</u>
+<i><b>Settings Overview for {name}</b></i>
 
-<code>TG Premium Status:</code> <b>{IS_PREMIUM_USER}</b>
+<code>Premium Status   :</code> {IS_PREMIUM_USER}
+<code>Leech Type       :</code> {ltype}
+<code>Prefix & Suffix  :</code> {lprefix} / {lsuffix}
+<code>Split Size       :</code> {split_size}
+<code>Upload Method    :</code> {leech_method} session
+<code>Rclone Config    :</code> {rccmsg}
+<code>Stop Duplicate   :</code> {sd_msg}
+<code>Default Upload   :</code> {du}
 
-<code>Leech Type       :</code> <b>{ltype}</b>
-<code>Leech Prefix     :</code> <b>{lprefix}</b>
-<code>Leech Suffix     :</code> <b>{lsuffix}</b>
-<code>Leech Cap Font   :</code> <b>{lcapfont}</b>
-<code>Leech Split Size :</code> <b>{split_size}</b>
-<code>Leech Destination:</code> <b>{leech_dest}</b>
-<code>Metadata Text    :</code> <b>{metatxt}</b>
-<code>Attachment Url   :</code> <b>{attachmenturl}</b>
+<b>Sensitive data has been hidden for your security.</b>
 
-<code>Thumbnail        :</code> <b>{thumbmsg}</b>
-<code>Equal Splits     :</code> <b>{equal_splits}</b>
-<code>Media Group      :</code> <b>{media_group}</b>
-<code>Upload Client    :</code> <b>{leech_method} session</b>
-<code>Hybrid Upload    :</code> <b>{mixed_leech}</b>
-
-<code>Rclone Config    :</code> <b>{rccmsg}</b>
-<code>Rclone Path      :</code> <b>{rccpath}</b>
-
-<code>Gdrive Token     :</code> <b>{tokenmsg}</b>
-<code>Gdrive ID        :</code> <b>{gdrive_id}</b>
-<code>Index Link       :</code> <b>{index}</b>
-
-<code>Stop Duplicate   :</code> <b>{sd_msg}</b>
-<code>Default Upload   :</code> <b>{du}</b>
-<code>Upload Paths     :</code> <b>{upload_paths}</b>
-<code>Name Substitute  :</code> <b>{ns_msg}</b>
-<code>Extension Filter :</code> <b>{ex_ex}</b>
-<code>YT-DLP Options   :</code> <b>{escape(ytopt)}</b>
+For more details, please check the menu below.
 """
 
     return (
@@ -950,7 +932,7 @@ async def edit_user_settings(client, query):
         await editMessage(
             message,
             text,
-            buttons.build_menu(3)
+            buttons.build_menu(2)
         )
     elif data[2] == "rclone":
         await query.answer()
