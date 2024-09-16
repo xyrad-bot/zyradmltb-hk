@@ -286,6 +286,17 @@ GDRIVE_ID = environ.get(
     "GDRIVE_ID",
     ""
 )
+
+COVER_IMAGES = environ.get(
+    "COVER_IMAGES",
+    ""
+)
+COVER_IMAGES = (
+    "https://i.pinimg.com/736x/83/05/0b/83050b95676c299eed2ff4840cc941f3.jpg"
+    if len(COVER_IMAGES) == 0
+    else COVER_IMAGES
+)
+
 if len(GDRIVE_ID) == 0:
     GDRIVE_ID = ""
 
@@ -988,6 +999,7 @@ config_dict = {
     "BOT_TOKEN": BOT_TOKEN,
     "CMD_SUFFIX": CMD_SUFFIX,
     "CLONE_LIMIT": CLONE_LIMIT,
+    "COVER_IMAGES": COVER_IMAGES,
     "DATABASE_URL": DATABASE_URL,
     "DEFAULT_UPLOAD": DEFAULT_UPLOAD,
     "DOWNLOAD_DIR": DOWNLOAD_DIR,
