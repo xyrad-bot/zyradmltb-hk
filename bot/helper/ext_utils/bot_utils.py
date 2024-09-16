@@ -223,7 +223,7 @@ async def get_telegraph_list(telegraph_content):
     path = [
         (
             await telegraph.create_page(
-                title="ᴍɪʀʀᴏʀ ᴅʀɪᴠᴇ ꜱᴇᴀʀᴄʜ",
+                title="𝚇𝚈𝚁𝙰𝙳 𝙳𝚁𝙸𝚅𝙴 𝚂𝙴𝙰𝚁𝙲𝙷",
                 content=content
             )
         )["path"]

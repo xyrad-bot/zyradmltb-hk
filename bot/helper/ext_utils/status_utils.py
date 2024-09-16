@@ -31,20 +31,20 @@ SIZE_UNITS = [
 
 
 class MirrorStatus:
-    STATUS_UPLOADING = "Upload 📤"
-    STATUS_DOWNLOADING = "Download 📥"
-    STATUS_CLONING = "Clone 🔃"
+    STATUS_UPLOADING = "Upload ⏫"
+    STATUS_DOWNLOADING = "Download ⏬"
+    STATUS_CLONING = "Clone 🧬"
     STATUS_QUEUEDL = "QueueDL ⏳"
     STATUS_QUEUEUP = "QueueUL ⏳"
-    STATUS_PAUSED = "Paused ⛔️"
-    STATUS_ARCHIVING = "Archive 🛠"
-    STATUS_EXTRACTING = "Extract 📂"
+    STATUS_PAUSED = "Paused ⏸"
+    STATUS_ARCHIVING = "Archive 📚"
+    STATUS_EXTRACTING = "Extract 📦"
     STATUS_SPLITTING = "Split ✂️"
-    STATUS_CHECKING = "CheckUp ⏱"
-    STATUS_SEEDING = "Seed 🌧"
-    STATUS_SAMVID = "SampleVid 🎬"
-    STATUS_CONVERTING = "Convert ♻️"
-    STATUS_METADATA = "Metadata 📝"
+    STATUS_CHECKING = "CheckUp 🕒"
+    STATUS_SEEDING = "Seed 🌱"
+    STATUS_SAMVID = "SampleVid 🎞"
+    STATUS_CONVERTING = "Convert 🔁"
+    STATUS_METADATA = "Metadata 📄"
 
 
 STATUSES = {
@@ -244,7 +244,7 @@ async def get_readable_message(
         )
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
         cancel_task = (
-            f"<b>/{BotCommands.CancelTaskCommand[0]}_{task.gid()}</b>"
+            f"<b>/{BotCommands.CancelTaskCommand[1]}_{task.gid()}</b>"
             if not task.listener.getChat.has_protected_content
             else f"<b>/{BotCommands.CancelTaskCommand[1]}_{task.gid()}</b>"
         )
@@ -254,13 +254,13 @@ async def get_readable_message(
             and int(config_dict["AUTO_DELETE_MESSAGE_DURATION"]) > 0
         ):
             msg += (
-                f"<code>{escape(f"{task.name()}")}</code>\n"
+                f"<pre>{escape(f"{task.name()}")}</pre>"
                 if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"<code>On Going Task...</code>\n"
+                else f"<pre>On Going Task...</pre>"
             )
         else:
             msg += (
-                f"<code>{escape(f"{task.name()}")}</code>\n"
+                f"<pre>{escape(f"{task.name()}")}</pre>"
             )
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,

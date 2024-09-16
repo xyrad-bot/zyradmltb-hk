@@ -83,7 +83,7 @@ class TelegraphHelper:
                     nxt_page += 1
             await self.edit_page(
                 path=path[prev_page],
-                title="Bot Torrent Search",
+                title="𝚇𝚈𝚁𝙰𝙳 𝚃𝙾𝚁𝚁𝙴𝙽𝚃 𝚂𝙸𝚃𝙴 𝚂𝙴𝙰𝚁𝙲𝙷",
                 content=content,
             )
         return
