@@ -3,13 +3,13 @@ from bot import (
     LOGGER,
     pkg_info
 )
-from bot.helper.ext_utils.status_utils import (
+from ...ext_utils.status_utils import (
     get_readable_file_size,
     get_readable_time,
     MirrorStatus
 )
 from subprocess import run as frun
-from bot.helper.ext_utils.files_utils import get_path_size
+from ...ext_utils.files_utils import get_path_size
 
 
 class MediaConvertStatus:
@@ -72,8 +72,8 @@ class MediaConvertStatus:
         return MirrorStatus.STATUS_CONVERTING
 
     async def processed_raw(self):
-        if self.listener.newDir:
-            self._proccessed_bytes = await get_path_size(self.listener.newDir)
+        if self.listener.new_dir:
+            self._proccessed_bytes = await get_path_size(self.listener.new_dir)
         else:
             self._proccessed_bytes = await get_path_size(self.listener.dir) - self._size
 
@@ -85,7 +85,7 @@ class MediaConvertStatus:
 
     async def cancel_task(self):
         LOGGER.info(f"Cancelling Converting: {self.listener.name}")
-        self.listener.isCancelled = True
+        self.listener.is_cancelled = True
         if self.listener.suproc is not None and self.listener.suproc.returncode is None:
             self.listener.suproc.kill()
-        await self.listener.onUploadError("Converting stopped by user!")
+        await self.listener.on_upload_error("Converting stopped by user!")

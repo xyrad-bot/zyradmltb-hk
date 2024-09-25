@@ -5,11 +5,6 @@ from os import (
 )
 from re import search as re_search
 from secrets import token_urlsafe
-from bot.helper.ext_utils.status_utils import get_readable_file_size
-from yt_dlp import (
-    YoutubeDL,
-    DownloadError
-)
 
 from bot import (
     pkg_info,
@@ -18,21 +13,26 @@ from bot import (
     non_queued_dl,
     queue_dict_lock
 )
-from bot.helper.ext_utils.bot_utils import (
+from ...ext_utils.bot_utils import (
     sync_to_async,
     async_to_sync
 )
-from bot.helper.ext_utils.task_manager import (
+from ...ext_utils.status_utils import get_readable_file_size
+from yt_dlp import (
+    YoutubeDL,
+    DownloadError
+)
+from ...ext_utils.task_manager import (
     check_running_tasks,
     limit_checker,
     list_checker,
     stop_duplicate_check
 )
-from bot.helper.task_utils.status_utils.queue_status import QueueStatus
-from bot.helper.telegram_helper.message_utils import (
+from ...task_utils.status_utils.queue_status import QueueStatus
+from ...telegram_helper.message_utils import (
     auto_delete_message,
     delete_links,
-    sendStatusMessage
+    send_status_message
 )
 from ..status_utils.yt_dlp_download_status import YtDlpDownloadStatus
 
@@ -87,7 +87,7 @@ class YoutubeDLHelper:
         self.playlist_index = 0
         self.playlist_count = 0
         self.opts = {
-            "progress_hooks": [self._onDownloadProgress],
+            "progress_hooks": [self._on_download_progress],
             "logger": MyLogger(
                 self,
                 self._listener
@@ -130,9 +130,9 @@ class YoutubeDLHelper:
     def eta(self):
         return self._eta
 
-    def _onDownloadProgress(self, d):
+    def _on_download_progress(self, d):
         self._downloading = True
-        if self._listener.isCancelled:
+        if self._listener.is_cancelled:
             raise ValueError("Cancelling...")
         if d["status"] == "finished":
             if self.is_playlist:
@@ -163,7 +163,7 @@ class YoutubeDLHelper:
             except:
                 pass
 
-    async def _onDownloadStart(self, from_queue=False):
+    async def _on_download_start(self, from_queue=False):
         async with task_dict_lock:
             task_dict[self._listener.mid] = YtDlpDownloadStatus(
                 self._listener,
@@ -171,15 +171,15 @@ class YoutubeDLHelper:
                 self._gid
             )
         if not from_queue:
-            await self._listener.onDownloadStart()
+            await self._listener.on_download_start()
             if self._listener.multi <= 1:
-                await sendStatusMessage(self._listener.message)
+                await send_status_message(self._listener.message)
 
-    def _onDownloadError(self, error):
-        self._listener.isCancelled = True
-        async_to_sync(self._listener.onDownloadError, error)
+    def _on_download_error(self, error):
+        self._listener.is_cancelled = True
+        async_to_sync(self._listener.on_download_error, error)
 
-    def extractMetaData(self):
+    def _extract_meta_data(self):
         if self._listener.link.startswith((
             "rtmp",
             "mms",
@@ -196,7 +196,7 @@ class YoutubeDLHelper:
                 if result is None:
                     raise ValueError("Info result is None")
             except Exception as e:
-                return self._onDownloadError(str(e))
+                return self._on_download_error(str(e))
             if self.is_playlist:
                 self.playlist_count = result.get(
                     "playlist_count",
@@ -246,22 +246,22 @@ class YoutubeDLHelper:
                 try:
                     ydl.download([self._listener.link])
                 except DownloadError as e:
-                    if not self._listener.isCancelled:
-                        self._onDownloadError(str(e))
+                    if not self._listener.is_cancelled:
+                        self._on_download_error(str(e))
                     return
             if self.is_playlist and (
                 not ospath.exists(path)
                 or len(listdir(path)) == 0
             ):
-                self._onDownloadError(
+                self._on_download_error(
                     "No video available to download from this playlist. Check logs for more details"
                 )
                 return
-            if self._listener.isCancelled:
+            if self._listener.is_cancelled:
                 raise ValueError
-            async_to_sync(self._listener.onDownloadComplete)
+            async_to_sync(self._listener.on_download_complete)
         except ValueError:
-            self._onDownloadError("Download Stopped by User!")
+            self._on_download_error("Download Stopped by User!")
 
     async def add_download(self, path, qual, playlist, options):
         if playlist:
@@ -270,7 +270,7 @@ class YoutubeDLHelper:
 
         self._gid = token_urlsafe(8)
 
-        await self._onDownloadStart()
+        await self._on_download_start()
 
         self.opts["postprocessors"] = [
             {
@@ -305,8 +305,8 @@ class YoutubeDLHelper:
 
         self.opts["format"] = qual
 
-        await sync_to_async(self.extractMetaData)
-        if self._listener.isCancelled:
+        await sync_to_async(self._extract_meta_data)
+        if self._listener.is_cancelled:
             return
 
         (
@@ -357,7 +357,7 @@ class YoutubeDLHelper:
         if qual.startswith("ba/b"):
             self._listener.name = f"{base_name}{self._ext}"
 
-        if self._listener.isLeech:
+        if self._listener.is_leech and not self._listener.thumbnail_layout:
             self.opts["postprocessors"].append(
                 {
                     "format": "jpg",
@@ -379,11 +379,13 @@ class YoutubeDLHelper:
         ]:
             self.opts["postprocessors"].append(
                 {
-                    "already_have_thumbnail": self._listener.isLeech,
+                    "already_have_thumbnail": bool(
+                        self._listener.is_leech and not self._listener.thumbnail_layout
+                    ),
                     "key": "EmbedThumbnail",
                 }
             )
-        elif not self._listener.isLeech:
+        elif not self._listener.is_leech:
             self.opts["writethumbnail"] = False
 
         (
@@ -391,7 +393,7 @@ class YoutubeDLHelper:
             button
         ) = await stop_duplicate_check(self._listener)
         if msg:
-            await self._listener.onDownloadError(
+            await self._listener.on_download_error(
                 msg,
                 button
             )
@@ -402,7 +404,7 @@ class YoutubeDLHelper:
             LOGGER.info(
                 f"Yt-Dlp Limit Exceeded: {self._listener.name} | {get_readable_file_size(self._listener.size)} | {self.playlist_count}"
             )
-            ymsg = await self._listener.onDownloadError(limit_exceeded)
+            ymsg = await self._listener.on_download_error(limit_exceeded)
             await delete_links(self._listener.message)
             await auto_delete_message(
                 self._listener.message,
@@ -413,7 +415,7 @@ class YoutubeDLHelper:
             LOGGER.info(
                 f"Yt-Dlp Limit Exceeded: {self._listener.name} | {get_readable_file_size(self._listener.size)} | {self.playlist_count}"
             )
-            ymsg = await self._listener.onDownloadError(list_exceeded)
+            ymsg = await self._listener.on_download_error(list_exceeded)
             await delete_links(self._listener.message)
             await auto_delete_message(
                 self._listener.message,
@@ -434,12 +436,12 @@ class YoutubeDLHelper:
                     "dl"
                 )
             await event.wait() # type: ignore
-            if self._listener.isCancelled:
+            if self._listener.is_cancelled:
                 return
             async with queue_dict_lock:
                 non_queued_dl.add(self._listener.mid)
             LOGGER.info(f"Start Queued Download from YT_DLP: {self._listener.name}")
-            await self._onDownloadStart(True)
+            await self._on_download_start(True)
 
         if not add_to_queue:
             LOGGER.info(f"Download with YT_DLP: {self._listener.name}")
@@ -447,10 +449,10 @@ class YoutubeDLHelper:
         await sync_to_async(self._download, path)
 
     async def cancel_task(self):
-        self._listener.isCancelled = True
+        self._listener.is_cancelled = True
         LOGGER.info(f"Cancelling Download: {self._listener.name}")
         if not self._downloading:
-            await self._listener.onDownloadError("Download Cancelled by User!")
+            await self._listener.on_download_error("Download Cancelled by User!")
 
     def _set_options(self, options):
         options = options.split("|")
@@ -498,7 +500,16 @@ class YoutubeDLHelper:
                     list
                 ):
                     self.opts[key].extend(tuple(value))
-                elif isinstance(value, dict):
+                elif isinstance(
+                    value,
+                    dict
+                ):
                     self.opts[key].append(value)
+            elif key == "download_ranges":
+                if isinstance(
+                    value,
+                    list
+                ):
+                    self.opts[key] = lambda info, ytdl: value
             else:
                 self.opts[key] = value
