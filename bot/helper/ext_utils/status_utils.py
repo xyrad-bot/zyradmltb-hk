@@ -400,7 +400,7 @@ async def get_readable_message(
         f"<b>RAM</b>: {virtual_memory().percent}% | "
         f"<b>UPTM</b>: {get_readable_time(time() - bot_start_time)}"
     )
-    remaining_time = 86400 - (time() - botStartTime)
+    remaining_time = 86400 - (time() - bot_start_time)
     if remaining_time < 3600:
         if remaining_time > 0:
             msg += f"\n\n<b><i>Bot Restarts In: {get_readable_time(remaining_time)}</i></b>"
