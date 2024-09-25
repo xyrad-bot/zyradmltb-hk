@@ -8,8 +8,7 @@ from aioshutil import rmtree
 from asyncio import (
     create_subprocess_exec,
     create_subprocess_shell,
-    gather,
-    wait_for,
+    gather
 )
 from dotenv import load_dotenv
 from io import BytesIO
@@ -54,11 +53,9 @@ from ..helper.ext_utils.bot_utils import (
     SetInterval,
     new_task,
     set_commands,
-    sync_to_async,
-    retry_function,
+    sync_to_async
 )
 from ..helper.ext_utils.db_handler import database
-from ..helper.ext_utils.jdownloader_booter import jdownloader
 from ..helper.ext_utils.status_utils import get_readable_file_size
 from ..helper.ext_utils.task_manager import start_from_queued
 from ..helper.task_utils.rclone_utils.serve import rclone_serve_booter

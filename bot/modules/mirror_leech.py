@@ -1,7 +1,4 @@
-from aiofiles.os import (
-    path as aiopath,
-    remove
-)
+from aiofiles.os import path as aiopath
 from base64 import b64encode
 from re import match as re_match
 
@@ -35,10 +32,8 @@ from ..helper.task_utils.download_utils.aria2_download import add_aria2c_downloa
 from ..helper.task_utils.download_utils.direct_downloader import add_direct_download
 from ..helper.task_utils.download_utils.direct_link_generator import direct_link_generator
 from ..helper.task_utils.download_utils.gd_download import add_gd_download
-from ..helper.task_utils.download_utils.jd_download import add_jd_download
 from ..helper.task_utils.download_utils.mega_download import add_mega_download
 from ..helper.task_utils.download_utils.qbit_download import add_qb_torrent
-from ..helper.task_utils.download_utils.nzb_downloader import add_nzb
 from ..helper.task_utils.download_utils.rclone_download import add_rclone_download
 from ..helper.task_utils.download_utils.telegram_download import TelegramDownloadHelper
 from ..helper.telegram_helper.bot_commands import BotCommands

@@ -7,11 +7,11 @@ from re import search as re_search
 from secrets import token_urlsafe
 
 from bot import (
+    non_queued_dl,
     pkg_info,
+    queue_dict_lock,
     task_dict_lock,
     task_dict,
-    non_queued_dl,
-    queue_dict_lock
 )
 from ...ext_utils.bot_utils import (
     sync_to_async,

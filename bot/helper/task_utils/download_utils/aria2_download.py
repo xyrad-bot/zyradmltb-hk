@@ -4,15 +4,15 @@ from aiofiles.os import (
 )
 
 from bot import (
-    aria2,
-    task_dict_lock,
-    task_dict,
     LOGGER,
-    config_dict,
+    aria2,
     aria2_options,
     aria2c_global,
+    config_dict,
     non_queued_dl,
     queue_dict_lock,
+    task_dict_lock,
+    task_dict
 )
 from ...ext_utils.bot_utils import (
     bt_selection_buttons,

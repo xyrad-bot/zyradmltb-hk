@@ -5,10 +5,10 @@ from bot import (
     LOGGER,
     aria2_options,
     aria2c_global,
-    task_dict,
-    task_dict_lock,
     non_queued_dl,
     queue_dict_lock,
+    task_dict,
+    task_dict_lock
 )
 from ...ext_utils.bot_utils import sync_to_async
 from ...ext_utils.status_utils import get_readable_file_size

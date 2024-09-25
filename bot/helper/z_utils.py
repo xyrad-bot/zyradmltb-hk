@@ -4,7 +4,6 @@ from os import (
     remove
 )
 from re import search
-from xml.etree import ElementTree as ET
 
 from base64 import (
     urlsafe_b64encode as b64e,

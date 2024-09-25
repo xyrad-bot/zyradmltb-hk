@@ -2,8 +2,14 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from google_auth_httplib2 import AuthorizedHttp
 from googleapiclient.http import build_http
-from logging import getLogger, ERROR
-from os import path as ospath, listdir
+from logging import (
+    ERROR,
+    getLogger
+)
+from os import (
+    path as ospath,
+    listdir
+)
 from pickle import load as pload
 from random import randrange
 from re import search as re_search
