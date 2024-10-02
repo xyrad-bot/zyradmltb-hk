@@ -163,7 +163,7 @@ async def create_thumb(msg, _id=""):
         _id = msg.id
         path = f"{DOWNLOAD_DIR}Thumbnails"
     else:
-        path = 'Thumbnails'
+        path = "Thumbnails"
     await makedirs(
         path,
         exist_ok=True
@@ -184,6 +184,7 @@ async def create_thumb(msg, _id=""):
     )
     await remove(photo_dir)
     return output
+
 
 global_streams = {}
 async def is_multi_streams(path):

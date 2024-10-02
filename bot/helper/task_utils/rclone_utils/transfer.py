@@ -47,6 +47,7 @@ class RcloneTransferHelper:
         self._sa_index = 0
         self._sa_number = 0
         self._use_service_accounts = config_dict["USE_SERVICE_ACCOUNTS"]
+        self.rclone_select = False
 
     @property
     def transferred_size(self):
@@ -155,7 +156,10 @@ class RcloneTransferHelper:
         if return_code == 0:
             await self._listener.on_download_complete()
         elif return_code != -9:
-            error = (await self._proc.stderr.read()).decode().strip() # type: ignore
+            error = (
+                (await self._proc.stderr.read()).decode().strip() # type: ignore
+                or "Use <code>/shell cat rlog.txt</code> to see more information"
+            )
             if (
                 not error
                 and remote_type == "drive"
@@ -324,7 +328,10 @@ class RcloneTransferHelper:
         if return_code == -9:
             return False
         elif return_code != 0:
-            error = (await self._proc.stderr.read()).decode().strip() # type: ignore
+            error = (
+                (await self._proc.stderr.read()).decode().strip() # type: ignore
+                or "Use <code>/shell cat rlog.txt</code> to see more information"
+            )
             if (
                 not error
                 and remote_type == "drive"
@@ -690,7 +697,11 @@ class RcloneTransferHelper:
     ):
         if unwanted_files is None:
             unwanted_files = []
-        ext = "*.{" + ",".join(self._listener.extension_filter) + "}"
+        if source.split(":")[-1].startswith("rclone_select"):
+            source = f"{source.split(":")[0]}:"
+            self.rclone_select = True
+        else:
+            ext = "*.{" + ",".join(self._listener.extension_filter) + "}"
         cmd = [
             pkg_info["pkgs"][3],
             method,
@@ -700,8 +711,6 @@ class RcloneTransferHelper:
             "-P",
             source,
             destination,
-            "--exclude",
-            ext,
             "--retries-sleep",
             "3s",
             "--ignore-case",
@@ -713,10 +722,17 @@ class RcloneTransferHelper:
             "--log-level",
             "DEBUG",
         ]
-        if rcflags := (
-            self._listener.rc_flags
-            or config_dict["RCLONE_FLAGS"]
-        ):
+        if self.rclone_select:
+            cmd.extend((
+                "--files-from",
+                self._listener.link
+            ))
+        else:
+            cmd.extend((
+                "--exclude",
+                ext
+            ))
+        if rcflags := self._listener.rc_flags or config_dict["RCLONE_FLAGS"]:
             rcflags = rcflags.split("|")
             for flag in rcflags:
                 if ":" in flag:
