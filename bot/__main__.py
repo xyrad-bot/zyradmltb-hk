@@ -4,32 +4,31 @@ from aiofiles.os import (
     remove
 )
 from asyncio import (
-    gather,
-    create_subprocess_exec
+    create_subprocess_exec,
+    gather
 )
-from os import execl as osexecl
 from nekozee.filters import command
 from nekozee.handlers import MessageHandler
-from signal import signal, SIGINT
+from os import execl as osexecl
+from signal import SIGINT, signal
 from sys import executable
 from time import time
 
 from bot import (
-    bot,
     LOGGER,
-    Intervals,
-    DATABASE_URL,
-    INCOMPLETE_TASK_NOTIFIER,
+    bot,
+    config_dict,
+    intervals,
     pkg_info,
     scheduler,
-    STOP_DUPLICATE_TASKS,
 )
 from .helper.ext_utils.bot_utils import (
+    create_help_buttons,
+    new_task,
     set_commands,
-    sync_to_async,
-    create_help_buttons
+    sync_to_async
 )
-from .helper.ext_utils.db_handler import DbManager
+from .helper.ext_utils.db_handler import database
 from .helper.ext_utils.files_utils import (
     clean_all,
     exit_clean_up
@@ -41,9 +40,9 @@ from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.message_utils import (
     auto_delete_message,
-    sendMessage,
-    editMessage,
-    sendFile
+    send_message,
+    edit_message,
+    send_file
 )
 from .modules import (
     anonymous,
@@ -61,26 +60,25 @@ from .modules import (
     leech_del,
     mirror_leech,
     rmdb,
-    rss,
     shell,
     status,
-    torrent_search,
     users_settings,
     ytdlp,
 )
 
 
+@new_task
 async def restart(_, message):
-    Intervals["stopAll"] = True
-    restart_message = await sendMessage(
+    intervals["stopAll"] = True
+    restart_message = await send_message(
         message,
         "Restarting..."
     )
     if scheduler.running:
         scheduler.shutdown(wait=False)
-    if qb := Intervals["qb"]:
+    if qb := intervals["qb"]:
         qb.cancel()
-    if st := Intervals["status"]:
+    if st := intervals["status"]:
         for intvl in list(st.values()):
             intvl.cancel()
     await sync_to_async(clean_all)
@@ -111,21 +109,23 @@ async def restart(_, message):
     )
 
 
+@new_task
 async def ping(_, message):
     start_time = int(round(time() * 1000))
-    reply = await sendMessage(
+    reply = await send_message(
         message,
         "Starting Ping"
     )
     end_time = int(round(time() * 1000))
-    await editMessage(
+    await edit_message(
         reply,
         f"{end_time - start_time} ms"
     )
 
 
+@new_task
 async def log(_, message):
-    await sendFile(
+    await send_file(
         message,
         "Zee_Logs.txt"
     )
@@ -156,7 +156,7 @@ help_string = f"""
 /{BotCommands.UsersCommand}: show users settings (Only Owner & Sudo).
 
 <b>Cancel Tasks:</b>
-/{BotCommands.CancelTaskCommand[0]} or /{BotCommands.CancelTaskCommand[1]} [gid]: Cancel task by gid or reply.
+/{BotCommands.CancelTaskCommand} [gid]: Cancel task by gid or reply.
 /{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
 
 /{BotCommands.SelectCommand}: Select files from torrents by gid or reply.
@@ -174,7 +174,7 @@ help_string = f"""
 /{BotCommands.RmSudoCommand}: Remove sudo users (Only Owner).
 
 <b>Maintainance:</b>
-/{BotCommands.RestartCommand}: Restart and update the bot (Only Owner & Sudo).
+/{BotCommands.RestartCommand[0]}: Restart and update the bot (Only Owner & Sudo).
 /{BotCommands.LogCommand}: Get a log file of the bot. Handy for getting crash reports (Only Owner & Sudo).
 /{BotCommands.ShellCommand}: Run shell commands (Only Owner).
 /{BotCommands.AExecCommand}: Exec async functions (Only Owner).
@@ -184,9 +184,9 @@ help_string = f"""
 /{BotCommands.RssCommand}: RSS Menu.
 """
 
-
+@new_task
 async def bot_help(_, message):
-    hmsg = await sendMessage(
+    hmsg = await send_message(
         message,
         help_string
     )
@@ -235,8 +235,8 @@ async def restart_notification():
         except Exception as e:
             LOGGER.error(e)
 
-    if INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
-        if notifier_dict := await DbManager().get_incomplete_tasks():
+    if config_dict["INCOMPLETE_TASK_NOTIFIER"] and config_dict["DATABASE_URL"]:
+        if notifier_dict := await database.get_incomplete_tasks():
             for cid, data in notifier_dict.items():
                 msg = (
                     "Restarted Successfully!"
@@ -261,8 +261,8 @@ async def restart_notification():
                         cid,
                         msg
                     )
-        if STOP_DUPLICATE_TASKS:
-            await DbManager().clear_download_links()
+        if config_dict["STOP_DUPLICATE_TASKS"]:
+            await database.clear_download_links()
 
     if await aiopath.isfile(".restartmsg"):
         try:
@@ -277,11 +277,11 @@ async def restart_notification():
 
 
 async def main():
-    if DATABASE_URL:
-        await DbManager().db_load()
+    if config_dict["DATABASE_URL"]:
+        await database.db_load()
     await gather(
         sync_to_async(clean_all),
-        torrent_search.initiate_search_tools(),
+        bot_settings.initiate_search_tools(),
         restart_notification(),
         telegraph.create_account(),
         rclone_serve_booter(),

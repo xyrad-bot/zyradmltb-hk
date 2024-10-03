@@ -15,18 +15,26 @@ from logging import (
 )
 from qbittorrentapi import (
     NotFound404Error,
-    Client as qbClient
+    Client as QbClient
 )
 from time import sleep
-from asyncio import get_event_loop
+from asyncio import (
+    get_running_loop,
+    new_event_loop,
+    set_event_loop
+)
 
 from web.nodes import make_tree
 
 app = Flask(__name__)
 
-web_loop = get_event_loop()
+try:
+    web_loop = get_running_loop()
+except RuntimeError:
+    web_loop = new_event_loop()
+    set_event_loop(web_loop)
 
-qbittorrent_client = qbClient(
+qbittorrent_client = QbClient(
     host="localhost",
     port=8090,
     VERIFY_WEBUI_CERTIFICATE=False,
