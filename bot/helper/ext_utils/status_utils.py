@@ -203,7 +203,7 @@ async def get_readable_message(
         status="All",
         page_step=1
     ):
-    msg = "<b>zyradaex</b>"
+    msg = ""
     button = None
 
     tasks = await sync_to_async(
@@ -241,7 +241,6 @@ async def get_readable_message(
             else get_readable_time(elapse)
         )
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
-        random_phrases = get_random_phrases()
         cancel_task = (
             f"<code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>"
             if not task.listener.get_chat.has_protected_content
@@ -255,7 +254,7 @@ async def get_readable_message(
             msg += (
                 f"{index + start_position}. {escape(f"{task.name()}")}"
                 if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"{index + start_position}. {random.choice(random_phrases)}"
+                else f"{index + start_position}. Just a moment! Your task is being handled"
             )
         else:
             msg += (

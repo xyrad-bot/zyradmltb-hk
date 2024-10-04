@@ -95,20 +95,6 @@ def create_help_buttons():
         "clone"
     )
 
-def get_random_phrases():
-    return [
-        "Sometimes hope is just a fleeting thought...",
-        "Why does everything feel so complicated?",
-        "Maybe this isn't the path, but I'm still trying...",
-        "Time passes, but what I'm waiting for never comes...",
-        "Is this real? Or am I just hoping for something?",
-        "Patience is hard when waiting for the uncertain...",
-        "Don't give up, even when everything feels gray...",
-        "It's time for some introspection; maybe something is wrong...",
-        "This feeling clouds my logic, yet I keep going...",
-        "When will all this end? Who knows..."
-    ]
-
 def bt_selection_buttons(id_):
     gid = (
         id_[:12]
@@ -206,7 +192,7 @@ async def set_commands(client):
                 "Check bot stats"
             ),
             BotCommand(
-                f"{BotCommands.CancelTaskCommand[0]}",
+                f"{BotCommands.CancelTaskCommand}",
                 "Cancel a task"
             ),
             BotCommand(
