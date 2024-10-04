@@ -16,7 +16,7 @@ from bot import (
     config_dict,
     status_dict,
 )
-from .bot_utils import sync_to_async, get_random_phrases
+from .bot_utils import sync_to_async
 from ..telegram_helper.button_build import ButtonMaker
 from ..telegram_helper.bot_commands import BotCommands
 

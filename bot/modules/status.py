@@ -260,7 +260,7 @@ def bot_sys_stats():
     bmsg += f"S: {swap}% | "
     bmsg += f"D: {disk}%\n\n"
     bmsg += f"Bandwidth: {traf}\n"
-    bmsg += f"Don't complain too much!!"
+    bmsg += f"Free is not for abuser!!"
     return bmsg
 
 
