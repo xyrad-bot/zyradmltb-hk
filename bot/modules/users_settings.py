@@ -373,16 +373,10 @@ async def get_user_settings(from_user):
     )
 
     text = f"""
-<i><b>Settings Overview for {name}</b></i>
+<u>Settings for {name}</u>
 
-<code>Premium Status   :</code> {IS_PREMIUM_USER}
-<code>Leech Type       :</code> {ltype}
-<code>Prefix & Suffix  :</code> {lprefix} / {lsuffix}
-<code>Split Size       :</code> {split_size}
-<code>Upload Method    :</code> {leech_method} session
-<code>Rclone Config    :</code> {rccmsg}
-<code>Stop Duplicate   :</code> {sd_msg}
-<code>Default Upload   :</code> {du}
+<code>TG Premium Status:</code> <b>{IS_PREMIUM_USER}</b>
+
 <code>Leech Type       :</code> <b>{ltype}</b>
 <code>Leech Prefix     :</code> <b>{lprefix}</b>
 <code>Leech Suffix     :</code> <b>{lsuffix}</b>
@@ -430,7 +424,7 @@ async def update_user_settings(query):
     media = (
         f"Thumbnails/{user_id}.jpg"
         if os_path.exists(f"Thumbnails/{user_id}.jpg")
-        else f"https://github.com/xyrad-bot/xyrad/raw/main/images/thumbnails.jpg"
+        else f"https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/mascot.png"
     )
     await query.message.edit_media(
         media=InputMediaPhoto(
@@ -458,7 +452,7 @@ async def user_settings(client, message):
     media = (
         f"Thumbnails/{user_id}.jpg"
         if os_path.exists(f"Thumbnails/{user_id}.jpg")
-        else f"https://github.com/xyrad-bot/xyrad/raw/main/images/thumbnails.jpg"
+        else f"https://github.com/xyrad-bot/xyrad/raw/refs/heads/main/images/mascot.png"
     )
     usetMsg = await message.reply_photo(
         media,
