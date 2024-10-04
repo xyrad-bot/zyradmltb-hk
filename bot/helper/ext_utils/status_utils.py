@@ -16,7 +16,7 @@ from bot import (
     config_dict,
     status_dict,
 )
-from .bot_utils import sync_to_async
+from .bot_utils import sync_to_async, get_random_phrases
 from ..telegram_helper.button_build import ButtonMaker
 from ..telegram_helper.bot_commands import BotCommands
 
@@ -31,20 +31,20 @@ SIZE_UNITS = [
 
 
 class MirrorStatus:
-    STATUS_UPLOADING = "Upload ⏫"
-    STATUS_DOWNLOADING = "Download ⏬"
-    STATUS_CLONING = "Clone 🧬"
-    STATUS_QUEUEDL = "QueueDL ⏳"
-    STATUS_QUEUEUP = "QueueUL ⏳"
-    STATUS_PAUSED = "Paused ⏸"
-    STATUS_ARCHIVING = "Archive 📚"
-    STATUS_EXTRACTING = "Extract 📦"
-    STATUS_SPLITTING = "Split ✂️"
-    STATUS_CHECKING = "CheckUp 🕒"
-    STATUS_SEEDING = "Seed 🌱"
-    STATUS_SAMVID = "SampleVid 🎞"
-    STATUS_CONVERTING = "Convert 🔁"
-    STATUS_METADATA = "Metadata 📄"
+    STATUS_UPLOADING = "Upload"
+    STATUS_DOWNLOADING = "Download"
+    STATUS_CLONING = "Clone"
+    STATUS_QUEUEDL = "QueueDL"
+    STATUS_QUEUEUP = "QueueUL"
+    STATUS_PAUSED = "Paused"
+    STATUS_ARCHIVING = "Archive"
+    STATUS_EXTRACTING = "Extract"
+    STATUS_SPLITTING = "Split"
+    STATUS_CHECKING = "CheckUp"
+    STATUS_SEEDING = "Seed"
+    STATUS_SAMVID = "SampleVid"
+    STATUS_CONVERTING = "Convert"
+    STATUS_METADATA = "Metadata"
 
 
 STATUSES = {
@@ -191,9 +191,9 @@ def get_progress_bar_string(pct):
         100
     )
     cFull = int(p // 10)
-    p_str = "█" * cFull
-    p_str += "▒" * (10 - cFull)
-    return f"{p_str}"
+    p_str = "■" * cFull
+    p_str += "□" * (10 - cFull)
+    return f"[{p_str}]"
 
 
 async def get_readable_message(
@@ -203,7 +203,7 @@ async def get_readable_message(
         status="All",
         page_step=1
     ):
-    msg = ""
+    msg = "<b>zyradaex</b>"
     button = None
 
     tasks = await sync_to_async(
@@ -241,6 +241,7 @@ async def get_readable_message(
             else get_readable_time(elapse)
         )
         user_tag = task.listener.tag.replace("@", "").replace("_", " ")
+        random_phrases = get_random_phrases()
         cancel_task = (
             f"<code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>"
             if not task.listener.get_chat.has_protected_content
@@ -252,13 +253,13 @@ async def get_readable_message(
             and int(config_dict["AUTO_DELETE_MESSAGE_DURATION"]) > 0
         ):
             msg += (
-                f"<pre>{escape(f"{task.name()}")}</pre>"
+                f"{index + start_position}. {escape(f"{task.name()}")}"
                 if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"<pre>On Going Task...</pre>"
+                else f"{index + start_position}. {random.choice(random_phrases)"
             )
         else:
             msg += (
-                f"<pre>{escape(f"{task.name()}")}</pre>"
+                f"{index + start_position}. {escape(f"{task.name()}")}"
             )
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
@@ -272,13 +273,13 @@ async def get_readable_message(
                 else task.progress()
             )
             msg += (
-                f"\n{get_progress_bar_string(progress)} » <b><i>{progress}</i></b>"
+                f"\n{get_progress_bar_string(progress)} <b><i>{progress}</i></b>"
                 f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Done   :</code> {task.processed_bytes()} of {task.size()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
                 f"\n<code>ETA    :</code> {task.eta()}"
                 f"\n<code>User   :</code> <b>{user_tag}</b>"
-                f"\n<code>UserID :</code> ||{task.listener.userId}||"
+                f"\n<code>UserID :</code> ||{task.listener.user_id}||"
                 f"\n<code>Upload :</code> {task.listener.mode}"
                 f"\n<code>Engine :</code> <b><i>{task.engine}</i></b>"
             )

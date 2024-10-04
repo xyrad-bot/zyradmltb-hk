@@ -95,6 +95,19 @@ def create_help_buttons():
         "clone"
     )
 
+def get_random_phrases():
+    return [
+        "Sometimes hope is just a fleeting thought...",
+        "Why does everything feel so complicated?",
+        "Maybe this isn't the path, but I'm still trying...",
+        "Time passes, but what I'm waiting for never comes...",
+        "Is this real? Or am I just hoping for something?",
+        "Patience is hard when waiting for the uncertain...",
+        "Don't give up, even when everything feels gray...",
+        "It's time for some introspection; maybe something is wrong...",
+        "This feeling clouds my logic, yet I keep going...",
+        "When will all this end? Who knows..."
+    ]
 
 def bt_selection_buttons(id_):
     gid = (
@@ -154,67 +167,67 @@ async def set_commands(client):
         await client.set_bot_commands([
             BotCommand(
                 f"{BotCommands.MirrorCommand[0]}",
-                "ᴍɪʀʀᴏʀ ᴅɪʀᴇᴄᴛ ʟɪɴᴋꜱ ᴜꜱɪɴɢ ᴀʀɪᴀ2ᴄ"
+                "Mirror direct links using Aria2c"
             ),
             BotCommand(
                 f"{BotCommands.QbMirrorCommand[0]}",
-                "ᴍɪʀʀᴏʀ Qʙɪᴛ-ᴛᴏʀʀᴇɴᴛ ꜱᴜᴘᴘᴏʀᴛᴇᴅ ʟɪɴᴋꜱ ᴏʀ ꜰɪʟᴇꜱ"
+                "Mirror Qbit-torrent supported links or files"
             ),
             BotCommand(
                 f"{BotCommands.YtdlCommand[0]}",
-                "ᴍɪʀʀᴏʀ ʏᴛ-ᴅʟᴘ ꜱᴜᴘᴘᴏʀᴛᴇᴅ ʟɪɴᴋꜱ"
+                "Mirror YT-DLP supported links"
             ),
             BotCommand(
                 f"{BotCommands.LeechCommand[0]}",
-                "ʟᴇᴇᴄʜ ᴅɪʀᴇᴄᴛ ʟɪɴᴋꜱ ᴜꜱɪɴɢ ᴀʀɪᴀ2ᴄ"
+                "Leech direct links using Aria2c"
             ),
             BotCommand(
                 f"{BotCommands.QbLeechCommand[0]}",
-                "ʟᴇᴇᴄʜ Qʙɪᴛ-ᴛᴏʀʀᴇɴᴛ ꜱᴜᴘᴘᴏʀᴛᴇᴅ ʟɪɴᴋꜱ ᴏʀ ꜰɪʟᴇꜱ"
+                "Leech Qbit-torrent supported links or files"
             ),
             BotCommand(
                 f"{BotCommands.YtdlLeechCommand[0]}",
-                "ʟᴇᴇᴄʜ ʏᴛ-ᴅʟᴘ ꜱᴜᴘᴘᴏʀᴛᴇᴅ ʟɪɴᴋꜱ"
+                "Leech YT-DLP supported links"
             ),
             BotCommand(
                 f"{BotCommands.CloneCommand}",
-                "ᴄᴏᴘʏ ꜰɪʟᴇ ᴏʀ ꜰᴏʟᴅᴇʀ ᴛᴏ ᴛʜᴇ ᴅʀɪᴠᴇ"
+                "Copy file or folder to the drive"
             ),
             BotCommand(
                 f"{BotCommands.CountCommand}",
-                "[ᴅʀɪᴠᴇ ᴜʀʟ]: ᴄᴏᴜɴᴛ ꜰɪʟᴇ ᴏʀ ꜰᴏʟᴅᴇʀ ᴏꜰ ᴛʜᴇ ɢᴏᴏɢʟᴇ ᴅʀɪᴠᴇ"
+                "[Drive URL]: Count file or folder in Google Drive"
             ),
             BotCommand(
                 f"{BotCommands.StatusCommand[0]}",
-                "ɢᴇᴛ ᴀʟʟ ᴛᴀꜱᴋꜱ ꜱᴛᴀᴛᴜꜱ ᴍᴇꜱꜱᴀɢᴇ"
+                "Get all tasks status message"
             ),
             BotCommand(
                 f"{BotCommands.StatsCommand[0]}",
-                "ᴄʜᴇᴄᴋ ʙᴏᴛ ꜱᴛᴀᴛꜱ"
+                "Check bot stats"
             ),
             BotCommand(
                 f"{BotCommands.CancelTaskCommand[0]}",
-                "ᴄᴀɴᴄᴇʟ ᴀ ᴛᴀꜱᴋ"
+                "Cancel a task"
             ),
             BotCommand(
                 f"{BotCommands.CancelAllCommand}",
-                "ᴄᴀɴᴄᴇʟ ᴀʟʟ ᴛᴀꜱᴋꜱ ᴡʜɪᴄʜ ᴀᴅᴅᴇᴅ ʙʏ ʏᴏᴜ"
+                "Cancel all tasks added by you"
             ),
             BotCommand(
                 f"{BotCommands.ListCommand}",
-                "ꜱᴇᴀʀᴄʜ ɪɴ ᴅʀɪᴠᴇ"
+                "Search in Drive"
             ),
             BotCommand(
                 f"{BotCommands.SearchCommand}",
-                "ꜱᴇᴀʀᴄʜ ɪɴ ᴛᴏʀʀᴇɴᴛ"
+                "Search in torrent"
             ),
             BotCommand(
                 f"{BotCommands.UserSetCommand[0]}",
-                "ᴜꜱᴇʀꜱ ꜱᴇᴛᴛɪɴɢꜱ"
+                "Users settings"
             ),
             BotCommand(
                 f"{BotCommands.HelpCommand}",
-                "ɢᴇᴛ ᴅᴇᴛᴀɪʟᴇᴅ ʜᴇʟᴘ"
+                "Get detailed help"
             ),
         ])
 
