@@ -255,7 +255,7 @@ async def get_readable_message(
             msg += (
                 f"{index + start_position}. {escape(f"{task.name()}")}"
                 if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"{index + start_position}. {random.choice(random_phrases)"
+                else f"{index + start_position}. {random.choice(random_phrases)}"
             )
         else:
             msg += (
