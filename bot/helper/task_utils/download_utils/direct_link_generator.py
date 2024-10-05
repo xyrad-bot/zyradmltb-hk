@@ -283,7 +283,7 @@ def mediafire(url, session=None):
     ):
         return final_link[0]
     if session is None:
-        session = Session()
+        session = create_scraper()
         parsed_url = urlparse(url)
         url = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
     try:
@@ -306,7 +306,7 @@ def mediafire(url, session=None):
         if html.xpath("//div[@class='passwordPrompt']"):
             session.close()
             raise DirectDownloadLinkException("ERROR: Wrong password.")
-    if not (final_link := html.xpath("//a[@id='downloadButton']/@href")):
+    if not (final_link := html.xpath('//a[@aria-label="Download file"]/@href')):
         session.close()
         raise DirectDownloadLinkException(
             "ERROR: No links found in this page Try Again"
@@ -1226,7 +1226,7 @@ def mediafireFolder(url):
         "header": ""
     }
 
-    session = Session()
+    session = create_scraper()
     adapter = HTTPAdapter(
         max_retries=Retry(
             total=10,
@@ -1306,7 +1306,7 @@ def mediafireFolder(url):
                 return
             if html.xpath("//div[@class='passwordPrompt']"):
                 return
-        if final_link := html.xpath("//a[@id='downloadButton']/@href"):
+        if final_link := html.xpath('//a[@aria-label="Download file"]/@href'):
             return final_link[0]
 
     def __get_content(folderKey, folderPath="", content_type="folders"):
