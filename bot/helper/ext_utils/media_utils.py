@@ -563,7 +563,7 @@ async def get_multiple_frames_thumbnail(video_file, layout, keep_screenshots):
         f"{time()}.jpg"
     )
     cmd = [
-        "ffmpeg",
+        pkg_info["pkgs"][2],
         "-hide_banner",
         "-loglevel",
         "error",
