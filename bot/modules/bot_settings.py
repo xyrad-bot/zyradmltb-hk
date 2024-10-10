@@ -31,6 +31,7 @@ from bot import (
     IS_PREMIUM_USER,
     LOGGER,
     MAX_SPLIT_SIZE,
+    OS_PORT,
     aria2,
     aria2_options,
     aria2c_global,
@@ -326,7 +327,7 @@ Timeout: 60 sec.
                 f"botset start qbit {x}",
                 position="footer"
             )
-        msg = f"Qbittorrent Options | Page: {int(START / 10)} | State: {state}"
+        msg = f"Qbittorrent Options | Page: {int(start / 10)} | State: {state}"
 
     button = buttons.build_menu(2)
     return (
