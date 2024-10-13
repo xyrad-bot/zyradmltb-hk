@@ -3,20 +3,25 @@ from dotenv import (
     dotenv_values
 )
 from logging import (
-    FileHandler,
-    StreamHandler,
+    ERROR,
     INFO,
     basicConfig,
     error as log_error,
-    info as log_info,
+    FileHandler,
     getLogger,
-    ERROR,
+    info as log_info,
+    StreamHandler,
 )
-from os import path, environ, remove
+from os import (
+    environ,
+    path,
+    remove
+)
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from subprocess import run as srun
+from subprocess import run as urun
 from requests import get as rget
+from sys import exit
 
 getLogger("pymongo").setLevel(ERROR)
 
@@ -75,7 +80,7 @@ if len(BOT_TOKEN) == 0:
     log_error("BOT_TOKEN variable is missing! Exiting now")
     exit(1)
 
-bot_id = BOT_TOKEN.split(
+BOT_ID = BOT_TOKEN.split(
     ":",
     1
 )[0]
@@ -94,8 +99,8 @@ if DATABASE_URL is not None:
             server_api=ServerApi("1")
         )
         db = conn.zee
-        old_config = db.settings.deployConfig.find_one({"_id": bot_id})
-        config_dict = db.settings.config.find_one({"_id": bot_id})
+        old_config = db.settings.deployConfig.find_one({"_id": BOT_ID})
+        config_dict = db.settings.config.find_one({"_id": BOT_ID})
         if old_config is not None:
             del old_config["_id"]
         if (
@@ -125,22 +130,22 @@ if len(UPSTREAM_BRANCH) == 0:
 
 if UPSTREAM_REPO is not None:
     if path.exists(".git"):
-        srun([
+        urun([
             "rm",
             "-rf",
             ".git"
         ])
 
-    update = srun(
+    update = urun(
         [
             f"git init -q \
-                     && git config --global user.email support@zee-mirror.in \
-                     && git config --global user.name zee \
-                     && git add . \
-                     && git commit -sm update -q \
-                     && git remote add origin {UPSTREAM_REPO} \
-                     && git fetch origin -q \
-                     && git reset --hard origin/{UPSTREAM_BRANCH} -q"
+            && git config --global user.email support@z-mirror.com \
+            && git config --global user.name zee \
+            && git add . \
+            && git commit -sm update -q \
+            && git remote add origin {UPSTREAM_REPO} \
+            && git fetch origin -q \
+            && git reset --hard origin/{UPSTREAM_BRANCH} -q"
         ],
         shell=True,
     )
@@ -152,3 +157,14 @@ if UPSTREAM_REPO is not None:
     else:
         log_error("Error while getting latest updates.")
         log_error("Check if entered UPSTREAM_REPO is valid or not!")
+
+urun(
+    [
+        "rm",
+        "-rf",
+        "Dockerfile",
+        "heroku.yml",
+        "LICENSE",
+        "README.md",
+    ]
+)
