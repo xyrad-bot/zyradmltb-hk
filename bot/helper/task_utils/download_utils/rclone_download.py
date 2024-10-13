@@ -1,7 +1,7 @@
 from asyncio import gather
+from aiofiles.os import remove
 from json import loads
 from secrets import token_urlsafe
-from aiofiles.os import remove
 
 from bot import (
     LOGGER,
