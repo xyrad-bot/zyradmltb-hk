@@ -9,7 +9,8 @@ from bot import (
     DOWNLOAD_DIR,
     LOGGER,
     bot,
-    bot_loop
+    bot_loop,
+    task_dict_lock
 )
 from ..helper.ext_utils.bot_utils import (
     COMMAND_USAGE,
@@ -120,12 +121,12 @@ class Mirror(TaskListener):
             "-ap": "", "-authpass": "",
             "-h": "", "-headers": "",
             "-t": "", "-thumb": "",
+            "-tl": "", "-thumblayout": "",
             "-ca": "", "-convertaudio": "",
             "-cv": "", "-convertvideo": "",
             "-ns": "", "-namesub": "",
             "-md": "", "-metadata": "",
-            "-mda": "", "-metaattachment": "",
-            "-tl": "", "-thumblayout": "",
+            "-mda": "", "-metaattachment": ""
         }
 
         arg_parser(
@@ -158,10 +159,16 @@ class Mirror(TaskListener):
         self.thumbnail_layout = args["-tl"] or args["-thumblayout"]
         self.as_doc = args["-doc"] or args["-document"]
         self.as_med = args["-med"] or args["-media"]
+        self.folder_name = ((
+            f"/{args["-sd"]}" or
+            f"/{args["-samedir"]}"
+        ) if (
+            len(args["-sd"]) or
+            len(args["-samedir"])
+        ) > 0 else "")
 
         headers = args["-h"] or args["-headers"]
         is_bulk = args["-b"] or args["-bulk"]
-        folder_name = args["-sd"] or args["-samedir"]
 
         bulk_start = 0
         bulk_end = 0
@@ -205,21 +212,28 @@ class Mirror(TaskListener):
             is_bulk = True
 
         if not is_bulk:
-            if folder_name:
-                self.seed = False
-                ratio = None
-                seed_time = None
-                folder_name = f"/{folder_name}"
-                if not self.same_dir:
-                    self.same_dir = {
-                        "total": self.multi,
-                        "tasks": set(),
-                        "name": folder_name,
-                    }
-                self.same_dir["tasks"].add(self.mid)
-            elif self.same_dir:
-                self.same_dir["total"] -= 1
-
+            if self.multi > 0:
+                if self.folder_name:
+                    self.seed = False
+                    ratio = None
+                    seed_time = None
+                    async with task_dict_lock:
+                        if self.folder_name in self.same_dir:
+                            self.same_dir[self.folder_name]["tasks"].add(self.mid)
+                            for fd_name in self.same_dir:
+                                if fd_name != self.folder_name:
+                                    self.same_dir[fd_name]["total"] -= 1
+                        elif self.same_dir:
+                            self.same_dir[self.folder_name] = {"total": self.multi, "tasks": {self.mid}}
+                            for fd_name in self.same_dir:
+                                if fd_name != self.folder_name:
+                                    self.same_dir[fd_name]["total"] -= 1
+                        else:
+                            self.same_dir = {self.folder_name: {"total": self.multi, "tasks": {self.mid}}}
+                elif self.same_dir:
+                    async with task_dict_lock:
+                        for fd_name in self.same_dir:
+                            self.same_dir[fd_name]["total"] -= 1
         else:
             await delete_message(self.pmsg)
             await self.init_bulk(
@@ -234,12 +248,13 @@ class Mirror(TaskListener):
             del self.bulk[0]
 
         await self.run_multi(
-            input_list,
-            folder_name,
-            Mirror
-        )
+                input_list,
+                Mirror
+            )
 
-        path = f"{DOWNLOAD_DIR}{self.mid}{folder_name}"
+        await self.get_tag(text)
+
+        path = f"{DOWNLOAD_DIR}{self.mid}{self.folder_name}"
 
         if (
             not self.link
@@ -272,13 +287,12 @@ class Mirror(TaskListener):
                     self.message,
                     tmsg
                 )
-                self.remove_from_same_dir()
+                await self.remove_from_same_dir()
                 await delete_message(self.pmsg)
                 return
 
         if isinstance(reply_to, list):
             self.bulk = reply_to
-            self.same_dir = {}
             b_msg = input_list[:1]
             self.options = " ".join(input_list[1:])
             b_msg.append(f"{self.bulk[0]} -m {len(self.bulk)} {self.options}")
@@ -357,7 +371,7 @@ class Mirror(TaskListener):
                 COMMAND_USAGE["mirror"][0],
                 COMMAND_USAGE["mirror"][1]
             )
-            self.remove_from_same_dir()
+            await self.remove_from_same_dir()
             await delete_message(self.pmsg)
             await auto_delete_message(
                 self.message,
@@ -379,7 +393,7 @@ class Mirror(TaskListener):
                 self.message,
                 e
             )
-            self.remove_from_same_dir()
+            await self.remove_from_same_dir()
             await delete_message(self.pmsg)
             await auto_delete_message(
                 self.message,
@@ -426,7 +440,7 @@ class Mirror(TaskListener):
                             self.message,
                             e
                         )
-                        self.remove_from_same_dir()
+                        await self.remove_from_same_dir()
                         await auto_delete_message(
                             self.message,
                             dmsg

@@ -1,22 +1,22 @@
 from aiofiles.os import (
+    makedirs,
     path as aiopath,
-    remove,
-    makedirs
+    remove
 )
 from asyncio import (
-    sleep,
     create_subprocess_exec,
-    gather
+    gather,
+    sleep
 )
 from asyncio.subprocess import PIPE
 from os import (
-    walk,
-    path as ospath
+    path as ospath,
+    walk
 )
 from secrets import token_urlsafe
 from aioshutil import (
-    move,
-    copy2
+    copy2,
+    move
 )
 from pyrogram.enums import ChatAction
 from re import (
@@ -26,8 +26,8 @@ from re import (
 
 from bot import (
     DOWNLOAD_DIR,
-    IS_PREMIUM_USER,
     LOGGER,
+    IS_PREMIUM_USER,
     MAX_SPLIT_SIZE,
     bot,
     config_dict,
@@ -36,15 +36,15 @@ from bot import (
     intervals,
     multi_tags,
     subprocess_lock,
-    task_dict,
     task_dict_lock,
-    user,
-    user_data
+    task_dict,
+    user_data,
+    user
 )
 from .ext_utils.bot_utils import (
+    get_size_bytes,
     new_task,
-    sync_to_async,
-    get_size_bytes
+    sync_to_async
 )
 from .ext_utils.bulk_links import extract_bulk_links
 from .ext_utils.exceptions import NotSupportedExtractionArchive
@@ -72,8 +72,8 @@ from .ext_utils.media_utils import (
 from .ext_utils.media_utils import (
     convert_video,
     convert_audio,
-    get_document_type,
-    split_file
+    split_file,
+    get_document_type
 )
 from .task_utils.gdrive_utils.list import GoogleDriveList
 from .task_utils.rclone_utils.list import RcloneList
@@ -97,7 +97,7 @@ from .telegram_helper.message_utils import (
     send_to_chat,
     send_message,
     send_log_message,
-    send_status_message,
+    send_status_message
 )
 from .z_utils import (
     none_admin_utils,
@@ -125,6 +125,7 @@ class TaskConfig:
         self.thumbnail_layout = ""
         self.metadata = None
         self.m_attachment = None
+        self.folder_name = ""
         self.get_chat = None
         self.split_size = 0
         self.max_split_size = 0
@@ -770,7 +771,7 @@ class TaskConfig:
                 self.tag = self.user.id
 
     @new_task
-    async def run_multi(self, input_list, folder_name, obj):
+    async def run_multi(self, input_list, obj):
         if (
             config_dict["DISABLE_MULTI"]
             and self.multi > 1
@@ -810,6 +811,9 @@ class TaskConfig:
                 self.message, # type: ignore
                 smsg
             )
+            async with task_dict_lock:
+                for fd_name in self.same_dir: # type: ignore
+                    self.same_dir[fd_name]["total"] -= self.multi # type: ignore
             return
         if len(self.bulk) != 0:
             msg = input_list[:1]
@@ -844,8 +848,6 @@ class TaskConfig:
             chat_id=self.message.chat.id, # type: ignore
             message_ids=nextmsg.id # type: ignore
         )
-        if folder_name:
-            self.same_dir["tasks"].add(nextmsg.id) # type: ignore
         if self.message.from_user: # type: ignore
             nextmsg.from_user = self.user
         else:
@@ -893,9 +895,14 @@ class TaskConfig:
                 del self.options[index + 1]
             self.options = " ".join(self.options)
             b_msg.append(f"{self.bulk[0]} -m {len(self.bulk)} {self.options}")
+            msg = " ".join(b_msg)
+            if len(self.bulk) > 2:
+                self.multi_tag = token_urlsafe(3)
+                multi_tags.add(self.multi_tag)
+                msg += f"\nCancel Multi: <code>/{BotCommands.CancelTaskCommand[1]} {self.multi_tag}</code>"
             nextmsg = await send_message(
                 self.message, # type: ignore
-                " ".join(b_msg)
+                msg
             )
             nextmsg = await self.client.get_messages( # type: ignore
                 chat_id=self.message.chat.id, # type: ignore
@@ -1373,15 +1380,14 @@ class TaskConfig:
         if await aiopath.isfile(dl_path):
             if (await get_document_type(dl_path))[0]:
                 checked = True
-                await cpu_eater_lock.acquire()
-                LOGGER.info(f"Creating Sample video: {self.name}")
-                res = await create_sample_video(
-                    self,
-                    dl_path,
-                    sample_duration,
-                    part_duration
-                )
-                cpu_eater_lock.release()
+                async with cpu_eater_lock:
+                    LOGGER.info(f"Creating Sample video: {self.name}")
+                    res = await create_sample_video(
+                        self,
+                        dl_path,
+                        sample_duration,
+                        part_duration
+                    )
                 if res:
                     newfolder = ospath.splitext(dl_path)[0]
                     name = dl_path.rsplit(

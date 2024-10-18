@@ -36,6 +36,8 @@ from .files_utils import (
     ARCH_EXT, 
     get_mime_type
 )
+from .links_utils import is_telegram_link
+from ..telegram_helper.message_utils import get_tg_link_message
 
 
 async def convert_video(listener, video_file, ext, retry=False):
@@ -82,11 +84,15 @@ async def convert_video(listener, video_file, ext, retry=False):
         ]
     if listener.is_cancelled:
         return False
-    listener.suproc = await create_subprocess_exec(
-        *cmd,
-        stderr=PIPE
-    )
-    _, stderr = await listener.suproc.communicate()
+    async with subprocess_lock:
+        listener.suproc = await create_subprocess_exec(
+            *cmd,
+            stderr=PIPE
+        )
+    (
+        _,
+        stderr
+    ) = await listener.suproc.communicate()
     if listener.is_cancelled:
         return False
     code = listener.suproc.returncode
@@ -129,10 +135,11 @@ async def convert_audio(listener, audio_file, ext):
     ]
     if listener.is_cancelled:
         return False
-    listener.suproc = await create_subprocess_exec(
-        *cmd,
-        stderr=PIPE
-    )
+    async with subprocess_lock:
+        listener.suproc = await create_subprocess_exec(
+            *cmd,
+            stderr=PIPE
+        )
     (
         _,
         stderr
@@ -862,10 +869,11 @@ async def create_sample_video(listener, video_file, sample_duration, part_durati
 
     if listener.is_cancelled:
         return False
-    listener.suproc = await create_subprocess_exec(
-        *cmd,
-        stderr=PIPE
-    )
+    async with subprocess_lock:
+        listener.suproc = await create_subprocess_exec(
+            *cmd,
+            stderr=PIPE
+        )
     (
         _,
         stderr
@@ -891,18 +899,15 @@ async def create_sample_video(listener, video_file, sample_duration, part_durati
         return False
 
 
-SUPPORTED_VIDEO_EXTENSIONS = {
-    ".mp4",
-    ".mkv"
-}
-
-
 async def edit_video_metadata(listener, dir):
 
     data = listener.metadata
     dir_path = Path(dir)
 
-    if dir_path.suffix.lower() not in SUPPORTED_VIDEO_EXTENSIONS:
+    if not dir_path.suffix.lower().endswith((
+        "mkv",
+        "mp4"
+    )):
         return dir
 
     file_name = dir_path.name
@@ -1075,11 +1080,23 @@ async def add_attachment(listener, dir):
     data = listener.m_attachment
     dir_path = Path(dir)
 
-    if dir_path.suffix.lower() not in SUPPORTED_VIDEO_EXTENSIONS:
+    if not dir_path.suffix.lower().endswith((
+        "mkv",
+        "mp4"
+    )):
         return dir
 
     file_name = dir_path.name
     work_path = dir_path.with_suffix(".temp.mkv")
+
+    if data:
+        if is_telegram_link(data):
+            msg = (await get_tg_link_message(data))[0] # type: ignore
+            data = (
+                await create_thumb(msg)
+                if msg.photo or msg.document # type: ignore
+                else ""
+            )
 
     data_ext = data.split(".")[-1].lower()
     if not (mime_type := MIME_TYPES.get(data_ext)):

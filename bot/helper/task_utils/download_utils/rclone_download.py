@@ -1,7 +1,7 @@
 from asyncio import gather
+from aiofiles.os import remove
 from json import loads
 from secrets import token_urlsafe
-from aiofiles.os import remove
 
 from bot import (
     LOGGER,
@@ -201,7 +201,7 @@ async def add_rclone_download(listener, path):
             await send_status_message(listener.message)
         LOGGER.info(f"Download with rclone: {listener.link}")
 
-    await RCTransfer.download( # type: ignore
+    await RCTransfer.download(
         remote,
         config_path,
         path
