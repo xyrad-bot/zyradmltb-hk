@@ -19,8 +19,8 @@ from ..telegram_helper.message_utils import (
     send_log_message
 )
 
-from nekozee.filters import command
-from nekozee.handlers import MessageHandler
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 
 
 async def checking_access(user_id, button=None):

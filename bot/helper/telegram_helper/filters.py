@@ -1,4 +1,4 @@
-from nekozee.filters import create
+from pyrogram.filters import create
 
 from bot import (
     config_dict,

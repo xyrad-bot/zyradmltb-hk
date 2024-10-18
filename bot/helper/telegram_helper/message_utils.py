@@ -10,14 +10,14 @@ from datetime import (
     timezone
 )
 
-from nekozee.errors import (
+from pyrogram.errors import (
     FloodWait,
     PeerIdInvalid,
     RPCError,
     UserNotParticipant
 )
-from nekozee.types import ChatPermissions
-from nekozee.enums import ChatAction
+from pyrogram.types import ChatPermissions
+from pyrogram.enums import ChatAction
 
 from bot import (
     LOGGER,

@@ -7,11 +7,11 @@ from asyncio import (
 from functools import partial
 from logging import getLogger
 from natsort import natsorted
-from nekozee.filters import (
+from pyrogram.filters import (
     regex,
     user
 )
-from nekozee.handlers import CallbackQueryHandler
+from pyrogram.handlers import CallbackQueryHandler
 from tenacity import RetryError
 from time import time
 

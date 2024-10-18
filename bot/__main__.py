@@ -7,8 +7,8 @@ from asyncio import (
     create_subprocess_exec,
     gather
 )
-from nekozee.filters import command
-from nekozee.handlers import MessageHandler
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 from os import execl as osexecl
 from signal import SIGINT, signal
 from sys import executable
@@ -133,7 +133,7 @@ async def log(_, message):
 
 help_string = f"""
 <b>NOTE: Click on any CMD to see more detalis.</b>
-
+<blockquote expandable>
 <b>Use Mirror commands for uploading to Cloud Drive:</b>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to cloud.
 /{BotCommands.QbMirrorCommand[0]} or /{BotCommands.QbMirrorCommand[1]}: Start Mirroring to cloud using qBittorrent.
@@ -181,7 +181,7 @@ help_string = f"""
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
 
-/{BotCommands.RssCommand}: RSS Menu.
+/{BotCommands.RssCommand}: RSS Menu.</blockquote>
 """
 
 @new_task

@@ -24,7 +24,7 @@ from logging import (
     info as log_info,
     warning as log_warning,
 )
-from nekozee import Client as TgClient
+from pyrogram import Client as TgClient
 from os import (
     remove,
     path as ospath,

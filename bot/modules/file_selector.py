@@ -3,11 +3,11 @@ from aiofiles.os import (
     remove
 )
 
-from nekozee.filters import (
+from pyrogram.filters import (
     command,
     regex
 )
-from nekozee.handlers import (
+from pyrogram.handlers import (
     CallbackQueryHandler,
     MessageHandler
 )

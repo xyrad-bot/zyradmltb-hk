@@ -12,15 +12,15 @@ from feedparser import parse as feed_parse
 from httpx import AsyncClient
 from io import BytesIO
 
-from nekozee.filters import (
+from pyrogram.filters import (
     command,
     regex
 )
-from nekozee.handlers import (
+from pyrogram.handlers import (
     MessageHandler,
     CallbackQueryHandler
 )
-from nekozee.errors import (
+from pyrogram.errors import (
     ListenerTimeout,
     ListenerStopped
 )
