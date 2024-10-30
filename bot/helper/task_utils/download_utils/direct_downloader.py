@@ -5,8 +5,6 @@ from bot import (
     LOGGER,
     aria2_options,
     aria2c_global,
-    non_queued_dl,
-    queue_dict_lock,
     task_dict,
     task_dict_lock
 )
@@ -82,8 +80,6 @@ async def add_direct_download(listener, path):
         await event.wait() # type: ignore
         if listener.is_cancelled:
             return
-        async with queue_dict_lock:
-            non_queued_dl.add(listener.mid)
 
     a2c_opt = {**aria2_options}
     [

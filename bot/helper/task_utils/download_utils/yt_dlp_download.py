@@ -7,11 +7,9 @@ from re import search as re_search
 from secrets import token_urlsafe
 
 from bot import (
-    non_queued_dl,
     pkg_info,
-    queue_dict_lock,
     task_dict_lock,
-    task_dict,
+    task_dict
 )
 from ...ext_utils.bot_utils import (
     sync_to_async,
@@ -29,11 +27,7 @@ from ...ext_utils.task_manager import (
     stop_duplicate_check
 )
 from ...task_utils.status_utils.queue_status import QueueStatus
-from ...telegram_helper.message_utils import (
-    auto_delete_message,
-    delete_links,
-    send_status_message
-)
+from ...telegram_helper.message_utils import send_status_message
 from ..status_utils.yt_dlp_download_status import YtDlpDownloadStatus
 
 LOGGER = getLogger(__name__)
@@ -435,8 +429,6 @@ class YoutubeDLHelper:
             await event.wait() # type: ignore
             if self._listener.is_cancelled:
                 return
-            async with queue_dict_lock:
-                non_queued_dl.add(self._listener.mid)
             LOGGER.info(f"Start Queued Download from YT_DLP: {self._listener.name}")
             await self._on_download_start(True)
 

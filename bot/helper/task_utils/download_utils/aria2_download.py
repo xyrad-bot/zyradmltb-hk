@@ -9,8 +9,6 @@ from bot import (
     aria2_options,
     aria2c_global,
     config_dict,
-    non_queued_dl,
-    queue_dict_lock,
     task_dict_lock,
     task_dict
 )
@@ -122,8 +120,6 @@ async def add_aria2c_download(listener, dpath, header, ratio, seed_time):
         await event.wait() # type: ignore
         if listener.is_cancelled:
             return
-        async with queue_dict_lock:
-            non_queued_dl.add(listener.mid)
         async with task_dict_lock:
             task = task_dict[listener.mid]
             task.queued = False
