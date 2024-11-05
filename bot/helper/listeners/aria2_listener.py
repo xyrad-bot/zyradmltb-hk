@@ -30,8 +30,6 @@ from ..ext_utils.task_manager import (
 )
 from ..task_utils.status_utils.aria2_status import Aria2Status
 from ..telegram_helper.message_utils import (
-    auto_delete_message,
-    delete_links,
     delete_message,
     send_message,
     update_status_message,
@@ -68,12 +66,12 @@ async def _on_download_started(api, gid):
         LOGGER.info(f"onAria2DownloadStarted: {download.name} - Gid: {gid}")
         await sleep(1)
 
+    await sleep(2)
     if task := await get_task_by_gid(gid):
         download = await sync_to_async(
             api.get_download,
             gid
         )
-        await sleep(2)
         await sync_to_async(download.update)
         task.listener.name = download.name
         task.listener.is_torrent = download.is_torrent
@@ -316,7 +314,8 @@ async def _on_download_stopped(api, gid):
 
 @loop_thread
 async def _on_download_error(api, gid):
-    LOGGER.info(f"on_download_error: {gid}")
+    await sleep(1)
+    LOGGER.info(f"onDownloadError: {gid}")
     error = "None"
     try:
         download = await sync_to_async(
