@@ -13,7 +13,7 @@ class TelegramStatus:
         self._size = self.listener.size
         self._gid = gid
         self._status = status
-        self.engine = f"Pyrofork v{self._eng_ver()}"
+        self.engine = f"PyroNext v{self._eng_ver()}"
 
     def _eng_ver(self):
         return get_distribution("nekozee").version

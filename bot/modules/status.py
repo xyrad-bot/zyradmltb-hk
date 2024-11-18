@@ -40,7 +40,7 @@ from ..helper.ext_utils.bot_utils import (
 )
 from ..helper.ext_utils.status_utils import (
     MirrorStatus,
-    get_progress_bar_string,
+    get_bar,
     get_readable_file_size,
     get_readable_time,
     get_specific_tasks,
@@ -69,7 +69,7 @@ async def mirror_status(_, message):
         currentTime = get_readable_time(time() - bot_start_time) # type: ignore
         free = get_readable_file_size(disk_usage(config_dict["DOWNLOAD_DIR"]).free)
         msg = "No Active Tasks!\n"
-        msg += f"Get your tasks status by adding me or user_id after cmd: /{BotCommands.StatusCommand[0]} me\n\n"
+        msg += f"Get your tasks status by adding me or user_id after cmd: /{BotCommands.StatusCommand[0]} me\n"
         msg += (
             f"\n<b>CPU:</b> {cpu_percent()}% | <b>FREE:</b> {free}"
             f"\n<b>RAM:</b> {virtual_memory().percent}% | <b>UPTIME:</b> {currentTime}"
@@ -128,7 +128,7 @@ async def status_pages(_, query):
         )
     ):
         await query.answer(
-            "You don't have any active tasks",
+            "Error: User has no active task!",
             show_alert=True
         )
         return
@@ -298,10 +298,10 @@ async def stats(_, message, edit_mode=False):
     swap = swap_memory()
 
     bot_stats = f"<b><i><u>My Bot Statistics</u></i></b>\n\n"\
-                f"<code>CPU  : </code>{get_progress_bar_string(cpuUsage)} {cpuUsage}%\n" \
-                f"<code>RAM  : </code>{get_progress_bar_string(mem_p)} {mem_p}%\n" \
-                f"<code>SWAP : </code>{get_progress_bar_string(swap.percent)} {swap.percent}%\n" \
-                f"<code>DISK : </code>{get_progress_bar_string(disk)} {disk}%\n\n" \
+                f"<code>CPU  : </code>{get_bar(cpuUsage)} {cpuUsage}%\n" \
+                f"<code>RAM  : </code>{get_bar(mem_p)} {mem_p}%\n" \
+                f"<code>SWAP : </code>{get_bar(swap.percent)} {swap.percent}%\n" \
+                f"<code>DISK : </code>{get_bar(disk)} {disk}%\n\n" \
                 f"<code>Bot Uptime      : </code> {botTime}\n" \
                 f"<code>BOT Restart     : </code> {res_time}\n\n" \
                 f"<code>Uploaded        : </code> {sent}\n" \
@@ -310,18 +310,18 @@ async def stats(_, message, edit_mode=False):
 
     sys_stats = f"<b><i><u>My System Statistics</u></i></b>\n\n"\
                 f"<b>System Uptime:</b> <code>{sysTime}</code>\n" \
-                f"<b>CPU:</b> {get_progress_bar_string(cpuUsage)}<code> {cpuUsage}%</code>\n" \
+                f"<b>CPU:</b> {get_bar(cpuUsage)}<code> {cpuUsage}%</code>\n" \
                 f"<b>CPU Total Core(s):</b> <code>{cpu_count(logical=True)}</code>\n" \
                 f"<b>P-Core(s):</b> <code>{cpu_count(logical=False)}</code> | " \
                 f"<b>V-Core(s):</b> <code>{v_core}</code>\n" \
                 f"<b>Frequency:</b> <code>{frequency} GHz</code>\n\n" \
-                f"<b>RAM:</b> {get_progress_bar_string(mem_p)}<code> {mem_p}%</code>\n" \
+                f"<b>RAM:</b> {get_bar(mem_p)}<code> {mem_p}%</code>\n" \
                 f"<b>Total:</b> <code>{get_readable_file_size(memory.total)}</code> | " \
                 f"<b>Free:</b> <code>{get_readable_file_size(memory.available)}</code>\n\n" \
-                f"<b>SWAP:</b> {get_progress_bar_string(swap.percent)}<code> {swap.percent}%</code>\n" \
+                f"<b>SWAP:</b> {get_bar(swap.percent)}<code> {swap.percent}%</code>\n" \
                 f"<b>Total</b> <code>{get_readable_file_size(swap.total)}</code> | " \
                 f"<b>Free:</b> <code>{get_readable_file_size(swap.free)}</code>\n\n" \
-                f"<b>DISK:</b> {get_progress_bar_string(disk)}<code> {disk}%</code>\n" \
+                f"<b>DISK:</b> {get_bar(disk)}<code> {disk}%</code>\n" \
                 f"<b>Total:</b> <code>{total}</code> | <b>Free:</b> <code>{free}</code>"
 
     buttons.data_button(

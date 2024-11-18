@@ -183,16 +183,16 @@ def speed_string_to_bytes(size_text: str):
     return size
 
 
-def get_progress_bar_string(pct):
+def get_bar(pct):
     if isinstance(pct, str):
         pct = float(pct.strip("%"))
     p = min(
         max(pct, 0),
         100
     )
-    cFull = int(p // 10)
+    cFull = int(p // 8)
     p_str = "■" * cFull
-    p_str += "□" * (10 - cFull)
+    p_str += "□" * (12 - cFull)
     return f"[{p_str}]"
 
 
@@ -240,26 +240,19 @@ async def get_readable_message(
             if elapse < 1
             else get_readable_time(elapse)
         )
-        user_tag = task.listener.tag.replace("@", "").replace("_", " ")
-        cancel_task = (
-            f"<code>/{BotCommands.CancelTaskCommand} {task.gid()}</code>"
-            if not task.listener.get_chat.has_protected_content
-            else f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+        user_tag = f"<code>{task.listener.message.from_user.mention(style='html')}</code>"
+        cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+        task_name = (
+            f"<b>{escape(f'{task.name()}')}</b>"
+            if config_dict["DELETE_LINKS"] and int(config_dict["HIDE_TASK"]) > 0
+            and elapse <= config_dict["HIDE_TASK"]
+            else f"<b>Task is being Processed!</b>"
+            if config_dict["DELETE_LINKS"] and int(config_dict["HIDE_TASK"]) > 0
+            else f"<b>{escape(f'{task.name()}')}</b>"
         )
 
-        if (
-            config_dict["DELETE_LINKS"]
-            and int(config_dict["AUTO_DELETE_MESSAGE_DURATION"]) > 0
-        ):
-            msg += (
-                f"<b>{tstatus}:</b> <code>{escape(f"{task.name()}")}</code>"
-                if elapse <= config_dict["AUTO_DELETE_MESSAGE_DURATION"]
-                else f"<b><i>Task {tstatus} In Progress</b></i>"
-            )
-        else:
-            msg += (
-                f"{tstatus}: <code>{escape(f"{task.name()}")}</code>"
-            )
+        msg += f"<pre>{task_name}</pre>"
+
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
             MirrorStatus.STATUS_QUEUEDL,
@@ -272,14 +265,14 @@ async def get_readable_message(
                 else task.progress()
             )
             msg += (
-                f"\n{get_progress_bar_string(progress)} » <b><i>{progress}</i></b>"
+                f"\n<code>Status :</code> <b>{tstatus}</b> <b><i>({progress})</i></b>"
                 f"\n<code>Done   :</code> {task.processed_bytes()} of {task.size()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
                 f"\n<code>ETA    :</code> {task.eta()}"
+                f"\n<code>Past   :</code> {elapsed}"
                 f"\n<code>User   :</code> <b>{user_tag}</b>"
                 f"\n<code>UserID :</code> {task.listener.user_id}"
-                f"\n<code>Upload :</code> {task.listener.mode}"
-                f"\n<code>Engine :</code> <b><i>{task.engine}</i></b>"
+                f"\n<code>Detail :</code> {task.listener.mode}"
             )
             if hasattr(
                 task,
@@ -310,13 +303,12 @@ async def get_readable_message(
             msg += (
                 f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Size   :</code> {task.size()}"
-                f"\n<code>Upload :</code> {task.listener.mode}"
+                f"\n<code>Detail :</code> {task.listener.mode}"
                 f"\n<code>Past   :</code> {elapsed}"
                 f"\n<code>User   :</code> {user_tag}"
-                f"\n<code>UserID :</code> ||{task.listener.user_id}||"
-                f"\n<code>Engine :</code> {task.engine}"
+                f"\n<code>UserID :</code> {task.listener.user_id}"
             )
-        msg += f"\n{cancel_task}\n\n\n"
+        msg += f"\n<code>Engine :</code> {task.engine}\n{cancel_task}\n\n"
 
     if len(msg) == 0:
         if status == "All":
@@ -329,19 +321,19 @@ async def get_readable_message(
     buttons = ButtonMaker()
     if is_user:
         buttons.data_button(
-            "ʀᴇғʀᴇsʜ",
-            f"status {sid} ref",
+            "sʏsᴛᴇᴍ\nɪɴғᴏ",
+            f"status {sid} stats",
             position="header"
         )
     if not is_user:
         buttons.data_button(
-            "ᴛᴀsᴋs\nɪɴғᴏ",
+            "📜",
             f"status {sid} ov",
             position="footer"
         )
         buttons.data_button(
-            "sʏsᴛᴇᴍ\nɪɴғᴏ",
-            f"status {sid} stats",
+            "♻️",
+            f"status {sid} ref",
             position="footer"
         )
     if len(tasks) > STATUS_LIMIT:
@@ -390,6 +382,7 @@ async def get_readable_message(
                 )
     button = buttons.build_menu(8)
     msg += (
+        f"──────────────────\n"
         f"<b>CPU</b>: {cpu_percent()}% | "
         f"<b>FREE</b>: {get_readable_file_size(disk_usage(DOWNLOAD_DIR).free)}\n"
         f"<b>RAM</b>: {virtual_memory().percent}% | "

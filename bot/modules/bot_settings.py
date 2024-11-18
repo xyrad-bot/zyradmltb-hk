@@ -2078,6 +2078,21 @@ async def load_config():
                         "api_key": temp[1]
                     })
 
+    HIDE_TASK = environ.get(
+        "HIDE_TASK",
+        ""
+    )
+    if len(HIDE_TASK) == 0:
+        HIDE_TASK = 10
+    else:
+        HIDE_TASK = int(HIDE_TASK)
+
+    COVER_IMAGES = (
+        "https://i.pinimg.com/736x/83/05/0b/83050b95676c299eed2ff4840cc941f3.jpg"
+        if len(COVER_IMAGES) == 0
+        else COVER_IMAGES
+    )
+
     config_dict.update(
         {
             "AUTO_DELETE_MESSAGE_DURATION": AUTO_DELETE_MESSAGE_DURATION,
@@ -2091,6 +2106,7 @@ async def load_config():
             "FSUB_IDS": FSUB_IDS,
             "DELETE_LINKS": DELETE_LINKS,
             "DM_MODE": DM_MODE,
+            "COVER_IMAGES": COVER_IMAGES,
             "STOP_DUPLICATE_TASKS": STOP_DUPLICATE_TASKS,
             "DISABLE_DRIVE_LINK": DISABLE_DRIVE_LINK,
             "DISABLE_LEECH": DISABLE_LEECH,
@@ -2165,6 +2181,7 @@ async def load_config():
             "UPSTREAM_BRANCH": UPSTREAM_BRANCH,
             "USER_SESSION_STRING": USER_SESSION_STRING,
             "USE_SERVICE_ACCOUNTS": USE_SERVICE_ACCOUNTS,
+            "HIDE_TASK": HIDE_TASK,
             "WEB_PINCODE": WEB_PINCODE,
             "YT_DLP_OPTIONS": YT_DLP_OPTIONS,
         }

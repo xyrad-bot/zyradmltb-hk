@@ -1007,6 +1007,15 @@ THUMBNAIL_LAYOUT = (
     else THUMBNAIL_LAYOUT
 )
 
+HIDE_TASK = environ.get(
+    "HIDE_TASK",
+    ""
+)
+if len(HIDE_TASK) == 0:
+    HIDE_TASK = 10
+else:
+    HIDE_TASK = int(HIDE_TASK)
+
 config_dict = {
     "AS_DOCUMENT": AS_DOCUMENT,
     "AUTHORIZED_CHATS": AUTHORIZED_CHATS,
@@ -1036,6 +1045,7 @@ config_dict = {
     "FSUB_IDS": FSUB_IDS,
     "GDRIVE_ID": GDRIVE_ID,
     "GDRIVE_LIMIT": GDRIVE_LIMIT,
+    "HIDE_TASK": HIDE_TASK,
     "INCOMPLETE_TASK_NOTIFIER": INCOMPLETE_TASK_NOTIFIER,
     "INDEX_URL": INDEX_URL,
     "IS_TEAM_DRIVE": IS_TEAM_DRIVE,
@@ -1159,11 +1169,11 @@ if BASE_URL:
     )
 
 pkg_info["pkgs"] = [
-    "xria",
-    "xnox",
-    "xtra",
-    "xone",
-    "xria|xnox|xtra|xone"
+    "buffet",
+    "openstack",
+    "render",
+    "zcl",
+    "buffet|openstack|render|zcl"
 ]
 
 hrun([

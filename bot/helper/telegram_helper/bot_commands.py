@@ -10,11 +10,11 @@ class _BotCommands:
         ]
         self.QbMirrorCommand = [
             f"qbmirror{CMD_SUFFIX}",
-            f"qbm{CMD_SUFFIX}",
+            f"qm{CMD_SUFFIX}",
         ]
         self.YtdlCommand = [
             f"ytdlm{CMD_SUFFIX}",
-            f"ytm{CMD_SUFFIX}",
+            f"ym{CMD_SUFFIX}",
         ]
         self.LeechCommand = [
             f"leech{CMD_SUFFIX}",
@@ -22,11 +22,11 @@ class _BotCommands:
         ]
         self.QbLeechCommand = [
             f"qbleech{CMD_SUFFIX}",
-            f"qbl{CMD_SUFFIX}",
+            f"ql{CMD_SUFFIX}",
         ]
         self.YtdlLeechCommand = [
             f"ytdlleech{CMD_SUFFIX}",
-            f"ytl{CMD_SUFFIX}",
+            f"yl{CMD_SUFFIX}",
         ]
         self.CloneCommand = f"clone{CMD_SUFFIX}"
         self.CountCommand = f"count{CMD_SUFFIX}"

@@ -212,9 +212,9 @@ class TaskConfig:
         )
 
         if self.compress:
-            mode += " as Zip"
+            mode += " (Zip)"
         elif self.extract:
-            mode += " as Unzip"
+            mode += " (Unzip)"
         self.mode = mode
 
 
