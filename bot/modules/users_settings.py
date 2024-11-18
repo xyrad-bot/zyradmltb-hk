@@ -576,7 +576,10 @@ async def set_option(message, option):
     elif option == "excluded_extensions":
         fx = config_dict["EXTENSION_FILTER"].split()
         fx += value.split()
-        value = ["aria2", "!qB"]
+        value = [
+            "aria2",
+            "!qB"
+        ]
         for x in fx:
             x = x.lstrip(".")
             value.append(x.strip().lower())
@@ -713,7 +716,7 @@ async def edit_user_settings(client, query):
         update_user_ldata(
             user_id,
             data[2],
-            f"{GLOBAL_EXTENSION_FILTER}"
+            f"{global_extension_filter}"
         )
         await update_user_settings(query)
         if config_dict["DATABASE_URL"]:
