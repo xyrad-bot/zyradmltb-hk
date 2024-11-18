@@ -1,7 +1,7 @@
 from asyncio import sleep
 
-from pyrogram.filters import command
-from pyrogram.handlers import MessageHandler
+from nekozee.filters import command
+from nekozee.handlers import MessageHandler
 
 from bot import bot
 from ..helper.telegram_helper.bot_commands import BotCommands

@@ -30,11 +30,11 @@ from tenacity import (
 )
 from time import time
 
-from pyrogram.errors import (
+from nekozee.errors import (
     FloodWait,
     RPCError
 )
-from pyrogram.types import (
+from nekozee.types import (
     InputMediaVideo,
     InputMediaDocument,
     InputMediaPhoto

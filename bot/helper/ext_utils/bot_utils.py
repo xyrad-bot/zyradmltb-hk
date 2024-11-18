@@ -13,7 +13,7 @@ from functools import (
 from os import cpu_count
 from httpx import AsyncClient
 
-from pyrogram.types import BotCommand
+from nekozee.types import BotCommand
 
 from bot import (
     user_data,

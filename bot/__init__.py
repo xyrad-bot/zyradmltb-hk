@@ -24,7 +24,7 @@ from logging import (
     StreamHandler,
     warning as log_warning,
 )
-from pyrogram import Client as TgClient
+from nekozee import Client as TgClient
 from os import (
     environ,
     getcwd,
@@ -58,7 +58,7 @@ getLogger("urllib3").setLevel(INFO)
 getLogger("apscheduler").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 getLogger("pymongo").setLevel(ERROR)
-getLogger("pyrogram").setLevel(ERROR)
+getLogger("nekozee").setLevel(ERROR)
 
 bot_start_time = time()
 
