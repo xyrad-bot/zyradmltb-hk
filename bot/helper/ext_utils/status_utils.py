@@ -74,7 +74,7 @@ async def get_task_by_gid(gid: str):
                 "seeding"
             ):
                 await sync_to_async(tk.update)
-            if tk.gid() == gid:
+            if len(gid) >= 8 and tk.gid().startswith(gid):
                 return tk
         return None
 
@@ -241,7 +241,7 @@ async def get_readable_message(
             else get_readable_time(elapse)
         )
         user_tag = f"<code>{task.listener.message.from_user.mention(style='html')}</code>"
-        cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+        cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()[:8]}</b>"
         task_name = (
             f"<b>{escape(f'{task.name()}')}</b>"
             if config_dict["DELETE_LINKS"] and int(config_dict["HIDE_TASK"]) > 0
