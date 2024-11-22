@@ -127,6 +127,8 @@ def direct_link_generator(link):
             "ds2video.com",
             "do0od.com",
             "d000d.com",
+            "doood.cam",
+            "poophd.vip",
         ]
     ):
         return doods(link)
