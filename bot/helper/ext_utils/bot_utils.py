@@ -161,7 +161,7 @@ async def set_commands(client):
         await client.set_bot_commands([
             BotCommand(
                 f"{BotCommands.MirrorCommand[0]}",
-                "Mirror direct links using Aria2c"
+                "Upload your file or link to cloud storage"
             ),
             BotCommand(
                 f"{BotCommands.QbMirrorCommand[0]}",
@@ -173,7 +173,7 @@ async def set_commands(client):
             ),
             BotCommand(
                 f"{BotCommands.LeechCommand[0]}",
-                "Leech direct links using Aria2c"
+                "Upload your file or link to telegram"
             ),
             BotCommand(
                 f"{BotCommands.QbLeechCommand[0]}",
@@ -185,7 +185,7 @@ async def set_commands(client):
             ),
             BotCommand(
                 f"{BotCommands.CloneCommand}",
-                "Copy file or folder to the drive"
+                "Copy file or folder to the drive (drive to drive)"
             ),
             BotCommand(
                 f"{BotCommands.CountCommand}",
@@ -197,11 +197,11 @@ async def set_commands(client):
             ),
             BotCommand(
                 f"{BotCommands.StatsCommand[0]}",
-                "Check bot stats"
+                "Check bot limit & stats"
             ),
             BotCommand(
                 f"{BotCommands.CancelTaskCommand}",
-                "Cancel a task"
+                "Cancel a single task"
             ),
             BotCommand(
                 f"{BotCommands.CancelAllCommand}",
@@ -209,19 +209,19 @@ async def set_commands(client):
             ),
             BotCommand(
                 f"{BotCommands.ListCommand}",
-                "Search in Drive"
+                "Search in Bot Drive"
             ),
             BotCommand(
                 f"{BotCommands.SearchCommand}",
-                "Search in torrent"
+                "Search in torrent plugin"
             ),
             BotCommand(
                 f"{BotCommands.UserSetCommand[0]}",
-                "Users settings"
+                "Open users settings"
             ),
             BotCommand(
                 f"{BotCommands.HelpCommand}",
-                "Get detailed help"
+                "Get detailed help of bot"
             ),
         ])
 

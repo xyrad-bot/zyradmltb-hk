@@ -321,7 +321,7 @@ async def get_readable_message(
     buttons = ButtonMaker()
     if is_user:
         buttons.data_button(
-            "sʏsᴛᴇᴍ\nɪɴғᴏ",
+            "🛠️",
             f"status {sid} stats",
             position="header"
         )
