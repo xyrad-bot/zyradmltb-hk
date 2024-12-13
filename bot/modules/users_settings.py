@@ -424,7 +424,7 @@ async def update_user_settings(query):
     media = (
         f"Thumbnails/{user_id}.jpg"
         if os_path.exists(f"Thumbnails/{user_id}.jpg")
-        else f"https://i.pinimg.com/736x/77/63/62/776362d3c857710fe7ece4fc552de23c.jpg"
+        else f"xrad.jpg"
     )
     await query.message.edit_media(
         media=InputMediaPhoto(
@@ -452,7 +452,7 @@ async def user_settings(client, message):
     media = (
         f"Thumbnails/{user_id}.jpg"
         if os_path.exists(f"Thumbnails/{user_id}.jpg")
-        else f"https://i.pinimg.com/736x/77/63/62/776362d3c857710fe7ece4fc552de23c.jpg"
+        else f"xrad.jpg"
     )
     usetMsg = await message.reply_photo(
         media,
