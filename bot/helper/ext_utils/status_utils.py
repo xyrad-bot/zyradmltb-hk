@@ -251,7 +251,7 @@ async def get_readable_message(
             else f"<b>{escape(f'{task.name()}')}</b>"
         )
 
-        msg += f"<pre>{task_name}</pre>"
+        msg += f"<pre language=ZyradaexLeech>{task_name}</pre>"
 
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
