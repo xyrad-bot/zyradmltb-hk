@@ -327,7 +327,7 @@ async def get_readable_message(
         )
     if not is_user:
         buttons.data_button(
-            "📜",
+            "☰",
             f"status {sid} ov",
             position="footer"
         )
