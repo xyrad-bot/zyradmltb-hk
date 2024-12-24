@@ -1198,7 +1198,7 @@ hrun([
     pkg_info["pkgs"][0],
     "--conf-path=/usr/src/app/a2c.conf"
 ])
-
+alive = Popen(["python3", "alive.py"])
 if ospath.exists("accounts.zip"):
     if ospath.exists("accounts"):
         rmtree("accounts")
