@@ -241,7 +241,7 @@ async def get_readable_message(
             else get_readable_time(elapse)
         )
         user_tag = f"<code>{task.listener.message.from_user.mention(style='html')}</code>"
-        cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()[:8]}</b>"
+        cancel_task = f"<code>/{BotCommands.CancelTaskCommand}_{task.gid()[:8]}</code>" if "-" in task.gid()[:8] else f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()[:8]}</b>"
         task_name = (
             f"<b>{escape(f'{task.name()}')}</b>"
             if config_dict["DELETE_LINKS"] and int(config_dict["HIDE_TASK"]) > 0
