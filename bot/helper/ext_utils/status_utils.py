@@ -67,6 +67,7 @@ STATUSES = {
 
 
 async def get_task_by_gid(gid: str):
+    gid = gid[:10]
     async with task_dict_lock:
         for tk in task_dict.values():
             if hasattr(tk, "seeding"):
@@ -180,17 +181,18 @@ def speed_string_to_bytes(size_text: str):
     return size
 
 
-def get_bar(pct):
+def get_progress_bar_string(pct):
     if isinstance(pct, str):
         pct = float(pct.strip("%"))
     p = min(
         max(pct, 0),
         100
     )
-    cFull = int(p // 8)
-    p_str = "■" * cFull
-    p_str += "□" * (12 - cFull)
-    return f"[{p_str}]"
+    cFull = int(p // 10)
+    p_str = "█" * cFull
+    p_str += "▒" * (10 - cFull)
+    return f"{p_str}"
+
 
 
 async def get_readable_message(
@@ -239,9 +241,9 @@ async def get_readable_message(
         )
         user_tag = f"<code>{task.listener.message.from_user.mention(style='html')}</code>"
         cancel_task = (
-            f"<code>/{BotCommands.CancelTaskCommand}_{task.gid()}</code>" 
+            f"<code>/{BotCommands.CancelTaskCommand}_{task.gid()[:10]}</code>" 
             if "-" in task.gid() 
-            else f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+            else f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()[:10]}</b>"
         )
         task_name = (
             f"<b>{escape(f'{task.name()}')}</b>"
@@ -252,7 +254,7 @@ async def get_readable_message(
             else f"<b>{escape(f'{task.name()}')}</b>"
         )
 
-        msg += f"<pre language=ZyradaexLeech>{task_name}</pre>"
+        msg += f"<pre language=ZyradaexLeech>{index + start_position}.{task_name}</pre>"
 
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
@@ -266,7 +268,8 @@ async def get_readable_message(
                 else task.progress()
             )
             msg += (
-                f"\n<code>Status :</code> <b>{tstatus}</b> <b><i>({progress})</i></b>"
+                f"\n{get_progress_bar_string(progress)} » <b><i>{progress}</i></b>"
+                f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Done   :</code> {task.processed_bytes()} of {task.size()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
                 f"\n<code>ETA    :</code> {task.eta()}"
@@ -320,6 +323,23 @@ async def get_readable_message(
         else:
             msg = f"No Active {status} Tasks!\n\n"
     buttons = ButtonMaker()
+    if is_user:
+        buttons.data_button(
+            "️⏱",
+            f"status {sid} stats",
+            position="header"
+        )
+    if not is_user:
+        buttons.data_button(
+            "☰",
+            f"status {sid} ov",
+            position="footer"
+        )
+        buttons.data_button(
+            "♺",
+            f"status {sid} ref",
+            position="footer"
+        )
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
         buttons.data_button(
@@ -337,7 +357,34 @@ async def get_readable_message(
             f"status {sid} nex",
             position="header"
         )
-        button = buttons.build_menu(8)
+        if tasks_no > 30:
+            for i in [
+                1,
+                2,
+                4,
+                6,
+                8,
+                10,
+                15
+            ]:
+                buttons.data_button(
+                    i,
+                    f"status {sid} ps {i}"
+                )
+    if (
+        status != "All" or
+        tasks_no > 20
+    ):
+        for (
+            label,
+            status_value
+        ) in list(STATUSES.items())[:9]:
+            if status_value != status:
+                buttons.data_button(
+                    label,
+                    f"status {sid} st {status_value}"
+                )
+    button = buttons.build_menu(8)
     msg += (
         f"──────────────────\n"
         f"<b>CPU</b>: {cpu_percent()}% | "

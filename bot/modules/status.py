@@ -40,7 +40,7 @@ from ..helper.ext_utils.bot_utils import (
 )
 from ..helper.ext_utils.status_utils import (
     MirrorStatus,
-    get_bar,
+    get_progress_bar_string,
     get_readable_file_size,
     get_readable_time,
     get_specific_tasks,
@@ -106,6 +106,32 @@ async def mirror_status(_, message):
 @new_task
 async def status_pages(_, query):
     user_id = query.from_user.id
+    spam = (
+        not await is_admin(
+            query.message,
+            user_id
+        )
+        and await request_limiter(query=query)
+    )
+    if spam:
+        return
+    if (
+        not await is_admin(
+            query.message,
+            user_id
+        )
+        and user_id
+        and not await sync_to_async(
+            get_specific_tasks,
+            "All",
+            user_id
+        )
+    ):
+        await query.answer(
+            "Don't Spam This Button!",
+            show_alert=True
+        )
+        return
     data = query.data.split()
     if data[2] == "stats":
         bstats = bot_sys_stats()
@@ -145,6 +171,83 @@ async def status_pages(_, query):
         await update_status_message(
             key,
             force=True
+        )
+    elif data[2] == "ov":
+        tasks = {
+            "Download": 0,
+            "Upload": 0,
+            "Seed": 0,
+            "Archive": 0,
+            "Extract": 0,
+            "Split": 0,
+            "QueueDl": 0,
+            "QueueUp": 0,
+            "Clone": 0,
+            "CheckUp": 0,
+            "Pause": 0,
+            "SamVid": 0,
+            "ConvertMedia": 0,
+        }
+        dl_speed = 0
+        up_speed = 0
+        seed_speed = 0
+        async with task_dict_lock:
+            for download in task_dict.values():
+                match await sync_to_async(download.status):
+                    case MirrorStatus.STATUS_DOWNLOADING:
+                        tasks["Download"] += 1
+                        dl_speed += speed_string_to_bytes(download.speed())
+                    case MirrorStatus.STATUS_UPLOADING:
+                        tasks["Upload"] += 1
+                        up_speed += speed_string_to_bytes(download.speed())
+                    case MirrorStatus.STATUS_SEEDING:
+                        tasks["Seed"] += 1
+                        seed_speed += speed_string_to_bytes(download.seed_speed())
+                    case MirrorStatus.STATUS_ARCHIVING:
+                        tasks["Archive"] += 1
+                    case MirrorStatus.STATUS_EXTRACTING:
+                        tasks["Extract"] += 1
+                    case MirrorStatus.STATUS_SPLITTING:
+                        tasks["Split"] += 1
+                    case MirrorStatus.STATUS_QUEUEDL:
+                        tasks["QueueDl"] += 1
+                    case MirrorStatus.STATUS_QUEUEUP:
+                        tasks["QueueUp"] += 1
+                    case MirrorStatus.STATUS_CLONING:
+                        tasks["Clone"] += 1
+                    case MirrorStatus.STATUS_PAUSED:
+                        tasks["Pause"] += 1
+                    case MirrorStatus.STATUS_SAMVID:
+                        tasks["SamVid"] += 1
+                    case MirrorStatus.STATUS_CONVERTING:
+                        tasks["ConvertMedia"] += 1
+                    case _:
+                        tasks["Download"] += 1
+                        dl_speed += speed_string_to_bytes(download.speed())
+
+        msg = (
+            f"ѕтαтυѕ ℓιѕт\n"
+            f"DL: {tasks['Download']} | "
+            f"UP: {tasks['Upload']} | "
+            f"SD: {tasks['Seed']} | "
+            f"EX: {tasks['Extract']} | "
+            f"SP: {tasks['Split']} | "
+            f"AR: {tasks['Archive']}\n"
+            f"QU: {tasks['QueueUp']} | "
+            f"QD: {tasks['QueueDl']} | "
+            f"PA: {tasks['Pause']} | "
+            f"SV: {tasks['SamVid']} | "
+            f"CM: {tasks['ConvertMedia']} | "
+            f"CL: {tasks['Clone']}\n\n"
+
+            f"вσт ℓιмιтѕ\n"
+            f"DL: {get_readable_file_size(dl_speed)}/s | " # type: ignore
+            f"UL: {get_readable_file_size(up_speed)}/s | " # type: ignore
+            f"SD: {get_readable_file_size(seed_speed)}/s" # type: ignore
+        )
+        await query.answer(
+            msg,
+            show_alert=True
         )
 
 
@@ -196,31 +299,31 @@ async def stats(_, message, edit_mode=False):
     mem_p = memory.percent
     swap = swap_memory()
 
-    bot_stats = f"<b><i><u>My Bot Statistics</u></i></b>\n\n"\
-                f"<code>CPU  : </code>{get_bar(cpuUsage)} {cpuUsage}%\n" \
-                f"<code>RAM  : </code>{get_bar(mem_p)} {mem_p}%\n" \
-                f"<code>SWAP : </code>{get_bar(swap.percent)} {swap.percent}%\n" \
-                f"<code>DISK : </code>{get_bar(disk)} {disk}%\n\n" \
+    bot_stats = f"<b><i><u>Zyradaex Bot Statistics</u></i></b>\n\n"\
+                f"<code>CPU  : </code>{get_progress_bar_string(cpuUsage)} {cpuUsage}%\n" \
+                f"<code>RAM  : </code>{get_progress_bar_string(mem_p)} {mem_p}%\n" \
+                f"<code>SWAP : </code>{get_progress_bar_string(swap.percent)} {swap.percent}%\n" \
+                f"<code>DISK : </code>{get_progress_bar_string(disk)} {disk}%\n\n" \
                 f"<code>Bot Uptime      : </code> {botTime}\n" \
                 f"<code>BOT Restart     : </code> {res_time}\n\n" \
                 f"<code>Uploaded        : </code> {sent}\n" \
                 f"<code>Downloaded      : </code> {recv}\n" \
                 f"<code>Total Bandwidth : </code> {tb}"
 
-    sys_stats = f"<b><i><u>My System Statistics</u></i></b>\n\n"\
+    sys_stats = f"<b><i><u>Zyradaex System Statistics</u></i></b>\n\n"\
                 f"<b>System Uptime:</b> <code>{sysTime}</code>\n" \
-                f"<b>CPU:</b> {get_bar(cpuUsage)}<code> {cpuUsage}%</code>\n" \
+                f"<b>CPU:</b> {get_progress_bar_string(cpuUsage)}<code> {cpuUsage}%</code>\n" \
                 f"<b>CPU Total Core(s):</b> <code>{cpu_count(logical=True)}</code>\n" \
                 f"<b>P-Core(s):</b> <code>{cpu_count(logical=False)}</code> | " \
                 f"<b>V-Core(s):</b> <code>{v_core}</code>\n" \
                 f"<b>Frequency:</b> <code>{frequency} GHz</code>\n\n" \
-                f"<b>RAM:</b> {get_bar(mem_p)}<code> {mem_p}%</code>\n" \
+                f"<b>RAM:</b> {get_progress_bar_string(mem_p)}<code> {mem_p}%</code>\n" \
                 f"<b>Total:</b> <code>{get_readable_file_size(memory.total)}</code> | " \
                 f"<b>Free:</b> <code>{get_readable_file_size(memory.available)}</code>\n\n" \
-                f"<b>SWAP:</b> {get_bar(swap.percent)}<code> {swap.percent}%</code>\n" \
+                f"<b>SWAP:</b> {get_progress_bar_string(swap.percent)}<code> {swap.percent}%</code>\n" \
                 f"<b>Total</b> <code>{get_readable_file_size(swap.total)}</code> | " \
                 f"<b>Free:</b> <code>{get_readable_file_size(swap.free)}</code>\n\n" \
-                f"<b>DISK:</b> {get_bar(disk)}<code> {disk}%</code>\n" \
+                f"<b>DISK:</b> {get_progress_bar_string(disk)}<code> {disk}%</code>\n" \
                 f"<b>Total:</b> <code>{total}</code> | <b>Free:</b> <code>{free}</code>"
 
     buttons.data_button(
@@ -321,111 +424,40 @@ async def send_sys_stats(_, query):
 @new_task
 async def send_repo_stats(_, query):
     buttons = ButtonMaker()
-    commit_date = "Official Repo not available"
-    last_commit = "No UPSTREAM_REPO"
-    c_log = "N/A"
-    d_log = "N/A"
-    vtag = "N/A"
+
+    last_commit = "N/A"
     version = "N/A"
     change_log = "N/A"
-    update_info = ""
-    s_id = ""
-    async with xclient() as client:
-        c_url = "https://gitlab.com/api/v4/projects/Dawn-India%2fZ-Mirror/repository/branches"
-        v_url = "https://gitlab.com/api/v4/projects/Dawn-India%2FZ-Mirror/repository/tags"
-        res = await client.get(c_url)
-        pns = await client.get(v_url)
-        if res.status_code == 200 and pns.status_code == 200:
-            commits = res.json()
-            tags = pns.json()
-            if commits:
-                commits = next(
-                    (commit for commit in commits if commit["name"] == "upstream"),
-                    None
-                )
-                commit_date = commits["commit"]["committed_date"] # type: ignore
-                commit_date = dt.strptime(
-                    commit_date,
-                    "%Y-%m-%dT%H:%M:%S.%f%z"
-                )
-                commit_date = commit_date.strftime("%d/%m/%Y at %I:%M %p")
-                logs = commits["commit"]["message"].split("\n\n") # type: ignore
-                c_log = logs[0]
-                d_log = (
-                    "N/A"
-                    if len(logs) < 2
-                    else logs[1]
-                )
-                s_id = commits["commit"]["short_id"] # type: ignore
-            if tags:
-                tags = next(
-                    (tag for tag in tags if tag["commit"]["short_id"] == f"{s_id}"),
-                    None
-                )
-                vtag = (
-                    "N/A"
-                    if tags is None
-                    else tags["name"]
-                )
-        if await aiopath.exists(".git"):
-            last_commit = (
-                await cmd_exec(
-                    "git log -1 --date=short --pretty=format:'%cr'",
-                    True
-                )
-            )[0]
-            version = (
-                await cmd_exec(
-                    "git describe --abbrev=0 --tags",
-                    True
-                )
-            )[0]
-            change_log = (
-                await cmd_exec(
-                    "git log -1 --pretty=format:'%s'",
-                    True
-                )
-            )[0]
-            if version == "":
-                version = "N/A"
-        if version != "N/A":
-            if version != vtag:
-                update_info =  f"⚠️ New Version Update Available ⚠️"
 
-    repo_stats = f"<b><i><u>My Repository Info</u></i></b> \n\n" \
-                 f"<b><i>Official Repository</i></b>        \n"   \
-                 f"<code>- Updated   : </code> {commit_date}\n"   \
-                 f"<code>- Version   : </code> {vtag}       \n"   \
-                 f"<code>- Changelog : </code> {c_log}      \n"   \
-                 f"<code>- Desc      : </code> {d_log}      \n\n" \
-                 f"<b><i>Bot Repository</i></b>             \n"   \
-                 f"<code>- Updated   : </code> {last_commit}\n"   \
-                 f"<code>- Version   : </code> {version}    \n"   \
-                 f"<code>- Changelog : </code> {change_log} \n\n" \
-                 f"<b>{update_info}</b>"
+    if await aiopath.exists(".git"):
+        last_commit = (
+            await cmd_exec("git log -1 --date=short --pretty=format:'%cr'", True)
+        )[0]
+        version = (
+            await cmd_exec("git describe --abbrev=0 --tags", True)
+        )[0]
+        change_log = (
+            await cmd_exec("git log -1 --pretty=format:'%s'", True)
+        )[0]
 
-    buttons.data_button(
-        "ʙᴏᴛ\nꜱᴛᴀᴛꜱ", 
-        "show_bot_stats"
+        if version == "":
+            version = "N/A"
+
+    repo_stats = (
+        f"<b><i><u>Zyradaex Repository Info</u></i></b>\n\n"
+        f"<code>- Updated   : </code> {last_commit}\n"
+        f"<code>- Version   : </code> {version}\n"
+        f"<code>- Changelog : </code> {change_log}\n"
     )
-    buttons.data_button(
-        "ꜱʏꜱᴛᴇᴍ\nꜱᴛᴀᴛꜱ",
-        "show_sys_stats"
-    )
-    buttons.data_button(
-        "ʙᴏᴛ\nʟɪᴍɪᴛꜱ",
-        "show_bot_limits"
-    )
-    buttons.data_button(
-        "ᴄʟᴏꜱᴇ",
-        "close_signal"
-    )
+
+    buttons.data_button("ʙᴏᴛ\nꜱᴛᴀᴛꜱ", "show_bot_stats")
+    buttons.data_button("ꜱʏꜱᴛᴇᴍ\nꜱᴛᴀᴛꜱ", "show_sys_stats")
+    buttons.data_button("ʙᴏᴛ\nʟɪᴍɪᴛꜱ", "show_bot_limits")
+    buttons.data_button("ᴄʟᴏꜱᴇ", "close_signal")
     sbtns = buttons.build_menu(2)
+
     await query.answer()
-    await query.message.edit_text(
-        repo_stats,
-        reply_markup=sbtns
-    )
+    await query.message.edit_text(repo_stats, reply_markup=sbtns)
 
 
 @new_task
@@ -443,7 +475,7 @@ async def send_bot_limits(_, query):
     UMT = "Unlimited" if config_dict["USER_MAX_TASKS"] == "" else config_dict["USER_MAX_TASKS"]
     BMT = "Unlimited" if config_dict["QUEUE_ALL"] == "" else config_dict["QUEUE_ALL"]
 
-    bot_limit = f"<b><i><u>My Bot Limitations</u></i></b>\n" \
+    bot_limit = f"<b><i><u>Zyradaex Bot Limitations</u></i></b>\n" \
                 f"<code>Torrent   : {TOR}</code> <b>GB</b>\n" \
                 f"<code>G-Drive   : {GDL}</code> <b>GB</b>\n" \
                 f"<code>Yt-Dlp    : {YTD}</code> <b>GB</b>\n" \
