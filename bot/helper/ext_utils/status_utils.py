@@ -69,12 +69,9 @@ STATUSES = {
 async def get_task_by_gid(gid: str):
     async with task_dict_lock:
         for tk in task_dict.values():
-            if hasattr(
-                tk,
-                "seeding"
-            ):
+            if hasattr(tk, "seeding"):
                 await sync_to_async(tk.update)
-            if len(gid) >= 8 and tk.gid().startswith(gid):
+            if tk.gid().startswith(gid):
                 return tk
         return None
 
@@ -241,7 +238,11 @@ async def get_readable_message(
             else get_readable_time(elapse)
         )
         user_tag = f"<code>{task.listener.message.from_user.mention(style='html')}</code>"
-        cancel_task = f"<code>/{BotCommands.CancelTaskCommand}_{task.gid()[:8]}</code>" if "-" in task.gid()[:8] else f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()[:8]}</b>"
+        cancel_task = (
+            f"<code>/{BotCommands.CancelTaskCommand}_{task.gid()}</code>" 
+            if "-" in task.gid() 
+            else f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+        )
         task_name = (
             f"<b>{escape(f'{task.name()}')}</b>"
             if config_dict["DELETE_LINKS"] and int(config_dict["HIDE_TASK"]) > 0
@@ -319,23 +320,6 @@ async def get_readable_message(
         else:
             msg = f"No Active {status} Tasks!\n\n"
     buttons = ButtonMaker()
-    if is_user:
-        buttons.data_button(
-            "🛠️",
-            f"status {sid} stats",
-            position="header"
-        )
-    if not is_user:
-        buttons.data_button(
-            "☰",
-            f"status {sid} ov",
-            position="footer"
-        )
-        buttons.data_button(
-            "♻️",
-            f"status {sid} ref",
-            position="footer"
-        )
     if len(tasks) > STATUS_LIMIT:
         msg += f"<b>Tasks:</b> {tasks_no} | <b>Step:</b> {page_step}\n"
         buttons.data_button(
@@ -353,34 +337,7 @@ async def get_readable_message(
             f"status {sid} nex",
             position="header"
         )
-        if tasks_no > 30:
-            for i in [
-                1,
-                2,
-                4,
-                6,
-                8,
-                10,
-                15
-            ]:
-                buttons.data_button(
-                    i,
-                    f"status {sid} ps {i}"
-                )
-    if (
-        status != "All" or
-        tasks_no > 20
-    ):
-        for (
-            label,
-            status_value
-        ) in list(STATUSES.items())[:9]:
-            if status_value != status:
-                buttons.data_button(
-                    label,
-                    f"status {sid} st {status_value}"
-                )
-    button = buttons.build_menu(8)
+        button = buttons.build_menu(8)
     msg += (
         f"──────────────────\n"
         f"<b>CPU</b>: {cpu_percent()}% | "

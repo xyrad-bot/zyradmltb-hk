@@ -106,32 +106,6 @@ async def mirror_status(_, message):
 @new_task
 async def status_pages(_, query):
     user_id = query.from_user.id
-    spam = (
-        not await is_admin(
-            query.message,
-            user_id
-        )
-        and await request_limiter(query=query)
-    )
-    if spam:
-        return
-    if (
-        not await is_admin(
-            query.message,
-            user_id
-        )
-        and user_id
-        and not await sync_to_async(
-            get_specific_tasks,
-            "All",
-            user_id
-        )
-    ):
-        await query.answer(
-            "Error: User has no active task!",
-            show_alert=True
-        )
-        return
     data = query.data.split()
     if data[2] == "stats":
         bstats = bot_sys_stats()
@@ -171,81 +145,6 @@ async def status_pages(_, query):
         await update_status_message(
             key,
             force=True
-        )
-    elif data[2] == "ov":
-        tasks = {
-            "Download": 0,
-            "Upload": 0,
-            "Seed": 0,
-            "Archive": 0,
-            "Extract": 0,
-            "Split": 0,
-            "QueueDl": 0,
-            "QueueUp": 0,
-            "Clone": 0,
-            "CheckUp": 0,
-            "Pause": 0,
-            "SamVid": 0,
-            "ConvertMedia": 0,
-        }
-        dl_speed = 0
-        up_speed = 0
-        seed_speed = 0
-        async with task_dict_lock:
-            for download in task_dict.values():
-                match await sync_to_async(download.status):
-                    case MirrorStatus.STATUS_DOWNLOADING:
-                        tasks["Download"] += 1
-                        dl_speed += speed_string_to_bytes(download.speed())
-                    case MirrorStatus.STATUS_UPLOADING:
-                        tasks["Upload"] += 1
-                        up_speed += speed_string_to_bytes(download.speed())
-                    case MirrorStatus.STATUS_SEEDING:
-                        tasks["Seed"] += 1
-                        seed_speed += speed_string_to_bytes(download.seed_speed())
-                    case MirrorStatus.STATUS_ARCHIVING:
-                        tasks["Archive"] += 1
-                    case MirrorStatus.STATUS_EXTRACTING:
-                        tasks["Extract"] += 1
-                    case MirrorStatus.STATUS_SPLITTING:
-                        tasks["Split"] += 1
-                    case MirrorStatus.STATUS_QUEUEDL:
-                        tasks["QueueDl"] += 1
-                    case MirrorStatus.STATUS_QUEUEUP:
-                        tasks["QueueUp"] += 1
-                    case MirrorStatus.STATUS_CLONING:
-                        tasks["Clone"] += 1
-                    case MirrorStatus.STATUS_PAUSED:
-                        tasks["Pause"] += 1
-                    case MirrorStatus.STATUS_SAMVID:
-                        tasks["SamVid"] += 1
-                    case MirrorStatus.STATUS_CONVERTING:
-                        tasks["ConvertMedia"] += 1
-                    case _:
-                        tasks["Download"] += 1
-                        dl_speed += speed_string_to_bytes(download.speed())
-
-        msg = (
-            f"DL: {tasks['Download']} | "
-            f"UP: {tasks['Upload']} | "
-            f"SD: {tasks['Seed']} | "
-            f"EX: {tasks['Extract']} | "
-            f"SP: {tasks['Split']} | "
-            f"AR: {tasks['Archive']}\n"
-            f"QU: {tasks['QueueUp']} | "
-            f"QD: {tasks['QueueDl']} | "
-            f"PA: {tasks['Pause']} | "
-            f"SV: {tasks['SamVid']} | "
-            f"CM: {tasks['ConvertMedia']} | "
-            f"CL: {tasks['Clone']}\n\n"
-
-            f"DL: {get_readable_file_size(dl_speed)}/s | " # type: ignore
-            f"UL: {get_readable_file_size(up_speed)}/s | " # type: ignore
-            f"SD: {get_readable_file_size(seed_speed)}/s" # type: ignore
-        )
-        await query.answer(
-            msg,
-            show_alert=True
         )
 
 
