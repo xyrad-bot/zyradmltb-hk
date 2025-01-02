@@ -397,7 +397,7 @@ async def get_readable_message(
         if remaining_time > 0:
             msg += f"\n\n<b><i>Bot Restarts In: {get_readable_time(remaining_time)}</i></b>"
         else:
-            msg += f"\n\n<b><i>⚠️ BOT WILL RESTART ANYTIME ⚠️</i></b>"
+            msg += f"\n\n<b><i>Bot Restarts In: ANYTIME!</i></b>"
     return (
         msg,
         button
