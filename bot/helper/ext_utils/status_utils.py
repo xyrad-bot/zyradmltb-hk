@@ -44,7 +44,7 @@ class MirrorStatus:
     STATUS_SEEDING = "Seed"
     STATUS_SAMVID = "SampleVideo"
     STATUS_CONVERTING = "Convert"
-    STATUS_METADATA = "AttchMetadata"
+    STATUS_METADATA = "MetaEdit"
 
 
 STATUSES = {
