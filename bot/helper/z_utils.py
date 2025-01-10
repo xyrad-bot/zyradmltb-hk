@@ -15,11 +15,6 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from bencoding import (
-    bdecode,
-    bencode
-)
-
 from bot import (
     KEY,
     LOGGER,
@@ -155,39 +150,3 @@ async def none_admin_utils(message, is_leech=False):
 
 backend = default_backend()
 iterations = 100_000
-
-def _derive_key(
-        password: bytes,
-        salt: bytes,
-        iterations: int = iterations
-    ) -> bytes:
-    kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA256(),
-        length=32,
-        salt=salt,
-        iterations=iterations,
-        backend=backend
-    )
-    return b64e(kdf.derive(password))
-
-def def_media(token: bytes) -> bytes:
-    decoded = b64d(token)
-    (
-        salt,
-        iter,
-        token
-    ) = (
-        decoded[:16],
-        decoded[16:20],
-        b64e(decoded[20:])
-    )
-    iterations = int.from_bytes(
-        iter,
-        "big"
-    )
-    key = _derive_key(
-        KEY.encode(),
-        salt,
-        iterations
-    )
-    return Fernet(key).decrypt(token)

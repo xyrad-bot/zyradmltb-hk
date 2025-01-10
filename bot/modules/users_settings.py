@@ -47,7 +47,6 @@ from ..helper.telegram_helper.message_utils import (
     send_file,
     send_message,
 )
-from ..helper.z_utils import def_media
 
 
 async def get_user_settings(from_user):
