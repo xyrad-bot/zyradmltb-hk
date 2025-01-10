@@ -1,4 +1,5 @@
 from asyncio import gather
+from functools import partial
 from aiofiles.os import (
     makedirs,
     path as aiopath,
@@ -645,6 +646,7 @@ async def edit_user_settings(client, query):
     user_id = from_user.id
     name = from_user.mention
     message = query.message
+    handler_dict[user_id] = False
     data = query.data.split()
     thumb_path = f"Thumbnails/{user_id}.jpg"
     rclone_conf = f"rclone/{user_id}.conf"

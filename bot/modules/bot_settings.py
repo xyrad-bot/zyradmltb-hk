@@ -12,6 +12,7 @@ from asyncio import (
 )
 from dotenv import load_dotenv
 from io import BytesIO
+from functools import partial
 from os import (
     environ,
     getcwd
@@ -71,6 +72,7 @@ from ..modules.torrent_search import initiate_search_tools
 
 start = 0
 state = "view"
+handler_dict = {}
 DEFAULT_VALUES = {
     "DOWNLOAD_DIR": "/usr/src/app/downloads/",
     "LEECH_SPLIT_SIZE": MAX_SPLIT_SIZE,
