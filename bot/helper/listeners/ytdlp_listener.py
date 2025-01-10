@@ -19,8 +19,8 @@ from ..telegram_helper.message_utils import (
     send_message
 )
 
-from nekozee.handlers import CallbackQueryHandler
-from nekozee.filters import (
+from pyrogram.handlers import CallbackQueryHandler
+from pyrogram.filters import (
     regex,
     user
 )

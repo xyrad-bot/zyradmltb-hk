@@ -1,7 +1,7 @@
 from asyncio import gather
 from json import loads
-from nekozee.filters import command
-from nekozee.handlers import MessageHandler
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 from secrets import token_urlsafe
 from aiofiles.os import remove
 

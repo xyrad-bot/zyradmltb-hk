@@ -7,8 +7,8 @@ from asyncio import (
     create_subprocess_exec,
     gather
 )
-from nekozee.filters import command
-from nekozee.handlers import MessageHandler
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 from os import execl as osexecl
 from signal import (
     SIGINT,

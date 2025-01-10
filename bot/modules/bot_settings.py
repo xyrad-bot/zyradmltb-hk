@@ -17,14 +17,10 @@ from os import (
     getcwd
 )
 
-from nekozee import filters
-from nekozee.handlers import (
+from pyrogram import filters
+from pyrogram.handlers import (
     MessageHandler,
     CallbackQueryHandler
-)
-from nekozee.errors import (
-    ListenerTimeout,
-    ListenerStopped
 )
 
 from bot import (
@@ -763,26 +759,33 @@ async def update_private_file(message, pre_message):
         await remove("accounts.zip")
 
 
-async def event_handler(client, query, document=False):
-    event_filter = (
-        filters.text | filters.document
-        if document
-        else filters.text
+async def event_handler(client, query, pfunc, rfunc, document=False):
+    chat_id = query.message.chat.id
+    handler_dict[chat_id] = True
+    start_time = time()
+
+    async def event_filter(_, __, event):
+        user = event.from_user or event.sender_chat
+        return bool(
+            user.id == query.from_user.id
+            and event.chat.id == chat_id
+            and (event.text or event.document and document)
+        )
+
+    handler = client.add_handler(
+        MessageHandler(pfunc, filters=create(event_filter)), group=-1
     )
-    return await client.listen(
-        chat_id=query.message.chat.id,
-        user_id=query.from_user.id,
-        filters=event_filter,
-        timeout=60,
-    )
+    while handler_dict[chat_id]:
+        await sleep(0.5)
+        if time() - start_time > 60:
+            handler_dict[chat_id] = False
+            await rfunc()
+    client.remove_handler(*handler)
 
 @new_task
 async def edit_bot_settings(client, query):
     message = query.message
-    await client.stop_listening(
-        chat_id=message.chat.id,
-        user_id=query.from_user.id
-    )
+    handler_dict[message.chat.id] = False
     data = query.data.split()
     if data[1] == "close":
         await query.answer()
@@ -974,21 +977,9 @@ async def edit_bot_settings(client, query):
             message,
             data[1]
         )
-        try:
-            event = await event_handler(
-                client,
-                query,
-                True
-            )
-        except ListenerTimeout:
-            await update_buttons(message)
-        except ListenerStopped:
-            pass
-        else:
-            await update_private_file(
-                event,
-                message
-            )
+        pfunc = partial(update_private_file, pre_message=message)
+        rfunc = partial(update_buttons, message)
+        await event_handler(client, query, pfunc, rfunc, True)
     elif (
         data[1] == "botvar"
         and state == "edit"
@@ -999,24 +990,9 @@ async def edit_bot_settings(client, query):
             data[2],
             data[1]
         )
-        try:
-            event = await event_handler(
-                client,
-                query
-            )
-        except ListenerTimeout:
-            await update_buttons(
-                message,
-                "var"
-            )
-        except ListenerStopped:
-            pass
-        else:
-            await edit_variable(
-                event,
-                message,
-                data[2]
-            )
+        pfunc = partial(edit_variable, pre_message=message, key=data[2])
+        rfunc = partial(update_buttons, message, "var")
+        await event_handler(client, query, pfunc, rfunc)
     elif (
         data[1] == "botvar"
         and state == "view"
@@ -1077,24 +1053,9 @@ async def edit_bot_settings(client, query):
             data[2],
             data[1]
         )
-        try:
-            event = await event_handler(
-                client,
-                query
-            )
-        except ListenerTimeout:
-            await update_buttons(
-                message,
-                "aria"
-            )
-        except ListenerStopped:
-            pass
-        else:
-            await edit_aria(
-                event,
-                message,
-                data[2]
-            )
+        pfunc = partial(edit_aria, pre_message=message, key=data[2])
+        rfunc = partial(update_buttons, message, "aria")
+        await event_handler(client, query, pfunc, rfunc)
     elif (
         data[1] == "ariavar"
         and state == "view"
@@ -1125,24 +1086,9 @@ async def edit_bot_settings(client, query):
             data[2],
             data[1]
         )
-        try:
-            event = await event_handler(
-                client,
-                query
-            )
-        except ListenerTimeout:
-            await update_buttons(
-                message,
-                "qbit"
-            )
-        except ListenerStopped:
-            pass
-        else:
-            await edit_qbit(
-                event,
-                message,
-                data[2]
-            )
+        pfunc = partial(edit_qbit, pre_message=message, key=data[2])
+        rfunc = partial(update_buttons, message, "qbit")
+        await event_handler(client, query, pfunc, rfunc)
     elif (
         data[1] == "qbitvar"
         and state == "view"

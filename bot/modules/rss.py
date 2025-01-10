@@ -12,17 +12,13 @@ from feedparser import parse as feed_parse
 from httpx import AsyncClient
 from io import BytesIO
 
-from nekozee.filters import (
+from pyrogram.filters import (
     command,
     regex
 )
-from nekozee.handlers import (
+from pyrogram.handlers import (
     MessageHandler,
     CallbackQueryHandler
-)
-from nekozee.errors import (
-    ListenerTimeout,
-    ListenerStopped
 )
 
 from bot import (
@@ -637,12 +633,24 @@ async def rss_delete(message):
             await database.rss_delete(user)
 
 
-async def event_handler(client, query):
-    return await client.listen(
-        chat_id=query.message.chat.id,
-        user_id=query.from_user.id,
-        timeout=60
-    )
+async def event_handler(client, query, pfunc):
+    user_id = query.from_user.id
+    handler_dict[user_id] = True
+    start_time = time()
+
+    async def event_filter(_, __, event):
+        user = event.from_user or event.sender_chat
+        return bool(
+            user.id == user_id and event.chat.id == query.message.chat.id and event.text
+        )
+
+    handler = client.add_handler(MessageHandler(pfunc, create(event_filter)), group=-1)
+    while handler_dict[user_id]:
+        await sleep(0.5)
+        if time() - start_time > 60:
+            handler_dict[user_id] = False
+            await update_rss_menu(query)
+    client.remove_handler(*handler)
 
 
 @new_task
@@ -685,15 +693,8 @@ async def rss_listener(client, query):
             RSS_HELP_MESSAGE,
             button
         )
-        try:
-            event = await event_handler(
-                client,
-                query
-            )
-        except ListenerTimeout:
-            await update_rss_menu(query)
-        except ListenerStopped:
-            pass
+        pfunc = partial(rss_sub, pre_event=query)
+        await event_handler(client, query, pfunc)
         else:
             await gather(
                 rss_sub(event),
@@ -735,20 +736,8 @@ async def rss_listener(client, query):
                 "Send one title with value separated by space get last X items.\nTitle Value\nTimeout: 60 sec.",
                 button,
             )
-            try:
-                event = await event_handler(
-                    client,
-                    query
-                )
-            except ListenerTimeout:
-                await update_rss_menu(query)
-            except ListenerStopped:
-                pass
-            else:
-                await gather(
-                    rss_get(event),
-                    update_rss_menu(query)
-                )
+            pfunc = partial(rss_get, pre_event=query)
+            await event_handler(client, query, pfunc)
     elif data[1] in [
         "unsubscribe",
         "pause",
@@ -791,23 +780,8 @@ async def rss_listener(client, query):
                 f"Send one or more rss titles separated by space to {data[1]}.\nTimeout: 60 sec.",
                 button,
             )
-            try:
-                event = await event_handler(
-                    client,
-                    query
-                )
-            except ListenerTimeout:
-                await update_rss_menu(query)
-            except ListenerStopped:
-                pass
-            else:
-                await gather(
-                    rss_update(
-                        event,
-                        data[1]
-                    ),
-                    update_rss_menu(query)
-                )
+            pfunc = partial(rss_update, pre_event=query, state=data[1])
+            await event_handler(client, query, pfunc)
     elif data[1] == "edit":
         if len(rss_dict.get(int(data[2]), {})) == 0:
             await query.answer(
@@ -839,20 +813,8 @@ Timeout: 60 sec. Argument -c for command and arguments
                 msg,
                 button
             )
-            try:
-                event = await event_handler(
-                    client,
-                    query
-                )
-            except ListenerTimeout:
-                await update_rss_menu(query)
-            except ListenerStopped:
-                pass
-            else:
-                await gather(
-                    rss_edit(event),
-                    update_rss_menu(query)
-                )
+            pfunc = partial(rss_edit, pre_event=query)
+            await event_handler(client, query, pfunc)
     elif data[1].startswith("uall"):
         if len(rss_dict.get(int(data[2]), {})) == 0:
             await query.answer(
@@ -940,20 +902,8 @@ Timeout: 60 sec. Argument -c for command and arguments
                 msg,
                 button
             )
-            try:
-                event = await event_handler(
-                    client,
-                    query
-                )
-            except ListenerTimeout:
-                await update_rss_menu(query)
-            except ListenerStopped:
-                pass
-            else:
-                await gather(
-                    rss_delete(event),
-                    update_rss_menu(query)
-                )
+            pfunc = partial(rss_delete, pre_event=query)
+            await event_handler(client, query, pfunc)
     elif data[1] == "listall":
         if not rss_dict:
             await query.answer(

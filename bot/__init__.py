@@ -24,7 +24,7 @@ from logging import (
     StreamHandler,
     warning as log_warning,
 )
-from nekozee import Client as TgClient
+from pyrogram import Client as TgClient
 from os import (
     environ,
     getcwd,
@@ -58,7 +58,7 @@ getLogger("urllib3").setLevel(INFO)
 getLogger("apscheduler").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 getLogger("pymongo").setLevel(ERROR)
-getLogger("nekozee").setLevel(ERROR)
+getLogger("pyrogram").setLevel(ERROR)
 
 bot_start_time = time()
 
@@ -1169,11 +1169,11 @@ if BASE_URL:
     )
 
 pkg_info["pkgs"] = [
-    "buffet",
-    "openstack",
-    "render",
-    "zcl",
-    "buffet|openstack|render|zcl"
+    "xria",
+    "xnox",
+    "xtra",
+    "xone",
+    "xria|xnox|xtra|xone"
 ]
 
 hrun([

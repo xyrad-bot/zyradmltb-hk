@@ -2,8 +2,8 @@ from aiofiles.os import path as aiopath
 from base64 import b64encode
 from re import match as re_match
 
-from nekozee.filters import command
-from nekozee.handlers import MessageHandler
+from pyrogram.filters import command
+from pyrogram.handlers import MessageHandler
 
 from bot import (
     DOWNLOAD_DIR,
