@@ -1,3 +1,4 @@
+from time import time
 from aiofiles import open as aiopen
 from aiofiles.os import (
     remove,

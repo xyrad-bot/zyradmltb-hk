@@ -1,4 +1,5 @@
-from asyncio import gather
+from time import time
+from asyncio import sleep, gather
 from functools import partial
 from aiofiles.os import (
     makedirs,
@@ -14,6 +15,7 @@ from os import (
 )
 
 from pyrogram import filters
+from pyrogram.filters import create
 from pyrogram.handlers import (
     MessageHandler,
     CallbackQueryHandler
@@ -49,6 +51,7 @@ from ..helper.telegram_helper.message_utils import (
     send_message,
 )
 
+handler_dict = {}
 
 async def get_user_settings(from_user):
     user_id = from_user.id
@@ -433,10 +436,6 @@ async def update_user_settings(query):
 
 @new_task
 async def user_settings(client, message):
-    await client.stop_listening(
-        chat_id=message.chat.id,
-        user_id=message.from_user.id
-    )
     from_user = message.from_user
     if not from_user:
         from_user = await anno_checker(message)
@@ -445,6 +444,7 @@ async def user_settings(client, message):
         msg,
         button
     ) = await get_user_settings(from_user)
+    handler_dict[from_user.id] = False
     media = (
         f"Thumbnails/{user_id}.jpg"
         if os_path.exists(f"Thumbnails/{user_id}.jpg")
@@ -464,6 +464,7 @@ async def user_settings(client, message):
 @new_task
 async def set_thumb(message):
     user_id = message.from_user.id
+    handler_dict[user_id] = False
     des_dir = await create_thumb(
         message,
         user_id
@@ -486,6 +487,7 @@ async def set_thumb(message):
 async def add_rclone(message):
     user_id = message.from_user.id
     rpath = f"{getcwd()}/rclone/"
+    handler_dict[user_id] = False
     await makedirs(rpath, exist_ok=True)
     des_dir = f"{rpath}{user_id}.conf"
     await message.download(file_name=des_dir)
@@ -507,6 +509,7 @@ async def add_rclone(message):
 async def add_token_pickle(message):
     user_id = message.from_user.id
     tpath = f"{getcwd()}/tokens/"
+    handler_dict[user_id] = False
     await makedirs(tpath, exist_ok=True)
     des_dir = f"{tpath}{user_id}.pickle"
     await message.download(file_name=des_dir)
@@ -527,6 +530,7 @@ async def add_token_pickle(message):
 @new_task
 async def delete_path(message):
     user_id = message.from_user.id
+    handler_dict[user_id] = False
     user_dict = user_data.get(user_id, {})
     names = message.text.split()
     for name in names:
@@ -550,6 +554,7 @@ async def delete_path(message):
 @new_task
 async def set_option(message, option):
     user_id = message.from_user.id
+    handler_dict[user_id] = False
     value = message.text
     if option == "split_size":
         if re_search(r"[a-zA-Z]", value):
@@ -646,19 +651,12 @@ async def edit_user_settings(client, query):
     user_id = from_user.id
     name = from_user.mention
     message = query.message
-    handler_dict[user_id] = False
     data = query.data.split()
+    handler_dict[user_id] = False
     thumb_path = f"Thumbnails/{user_id}.jpg"
     rclone_conf = f"rclone/{user_id}.conf"
     token_pickle = f"tokens/{user_id}.pickle"
-    user_dict = user_data.get(
-        user_id,
-        {}
-    )
-    await client.stop_listening(
-        chat_id=message.chat.id,
-        user_id=query.from_user.id
-    )
+    user_dict = user_data.get(user_id, {})
     if user_id != int(data[1]):
         await query.answer(
             "Not Yours!",
