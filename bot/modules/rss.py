@@ -695,11 +695,6 @@ async def rss_listener(client, query):
         )
         pfunc = partial(rss_sub, pre_event=query)
         await event_handler(client, query, pfunc)
-        else:
-            await gather(
-                rss_sub(event),
-                update_rss_menu(query)
-            )
     elif data[1] == "list":
         if len(rss_dict.get(int(data[2]), {})) == 0:
             await query.answer(
