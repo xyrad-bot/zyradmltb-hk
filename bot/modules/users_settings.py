@@ -1,5 +1,5 @@
 from time import time
-from asyncio import sleep, gather
+from asyncio import gather, sleep
 from functools import partial
 from aiofiles.os import (
     makedirs,
@@ -415,10 +415,7 @@ async def get_user_settings(from_user):
 
 @new_task
 async def update_user_settings(query):
-    (
-        msg,
-        button
-    ) = await get_user_settings(query.from_user)
+    msg, button = await get_user_settings(query.from_user)
     user_id = query.from_user.id
     media = (
         f"Thumbnails/{user_id}.jpg"
@@ -462,7 +459,7 @@ async def user_settings(client, message):
 
 
 @new_task
-async def set_thumb(message):
+async def set_thumb(_, message, pre_event):
     user_id = message.from_user.id
     handler_dict[user_id] = False
     des_dir = await create_thumb(
@@ -475,6 +472,7 @@ async def set_thumb(message):
         des_dir
     )
     await delete_message(message)
+    await update_user_settings(pre_event)
     if config_dict["DATABASE_URL"]:
         await database.update_user_doc(
             user_id,
@@ -484,7 +482,7 @@ async def set_thumb(message):
 
 
 @new_task
-async def add_rclone(message):
+async def add_rclone(_, message, pre_event):
     user_id = message.from_user.id
     rpath = f"{getcwd()}/rclone/"
     handler_dict[user_id] = False
@@ -497,6 +495,7 @@ async def add_rclone(message):
         f"rclone/{user_id}.conf"
     )
     await delete_message(message)
+    await update_user_settings(pre_event)
     if config_dict["DATABASE_URL"]:
         await database.update_user_doc(
             user_id,
@@ -506,7 +505,7 @@ async def add_rclone(message):
 
 
 @new_task
-async def add_token_pickle(message):
+async def add_token_pickle(_, message, pre_event):
     user_id = message.from_user.id
     tpath = f"{getcwd()}/tokens/"
     handler_dict[user_id] = False
@@ -519,6 +518,7 @@ async def add_token_pickle(message):
         f"tokens/{user_id}.pickle"
     )
     await delete_message(message)
+    await update_user_settings(pre_event)
     if config_dict["DATABASE_URL"]:
         await database.update_user_doc(
             user_id,
@@ -528,7 +528,7 @@ async def add_token_pickle(message):
 
 
 @new_task
-async def delete_path(message):
+async def delete_path(_, message, pre_event):
     user_id = message.from_user.id
     handler_dict[user_id] = False
     user_dict = user_data.get(user_id, {})
@@ -543,6 +543,7 @@ async def delete_path(message):
         new_value
     )
     await delete_message(message)
+    await update_user_settings(pre_event)
     if config_dict["DATABASE_URL"]:
         await database.update_user_doc(
             user_id,
@@ -552,7 +553,7 @@ async def delete_path(message):
 
 
 @new_task
-async def set_option(message, option):
+async def set_option(_, message, pre_event, option):
     user_id = message.from_user.id
     handler_dict[user_id] = False
     value = message.text
@@ -612,6 +613,7 @@ async def set_option(message, option):
         value
     )
     await delete_message(message)
+    await update_user_settings(pre_event)
     if config_dict["DATABASE_URL"]:
         await database.update_user_data(user_id)
 
