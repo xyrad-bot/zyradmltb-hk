@@ -292,7 +292,39 @@ def fuckingfast_dl(url):
         raise DirectDownloadLinkException(f"ERROR: {str(e)}") from e
     finally:
         session.close()
+def buzzheavier(url):
+    """
+    Generate a direct download link for buzzheavier URLs.
+    @param link: URL from buzzheavier
+    @return: Direct download link
+    """
+    session = Session()
+    if not "/download" in url:
+        url += "/download"
+    
+    # Normalize URL
+    url = url.strip()
+    session.headers.update({
+        'referer': url.split("/download")[0],
+        'hx-current-url': url.split("/download")[0],
+        'hx-request': 'true',
+        'priority': 'u=1, i'
+    })
 
+    try:
+        response = session.get(url)
+        d_url = response.headers.get('Hx-Redirect')
+
+        if not d_url:
+            raise DirectDownloadLinkException("ERROR: Failed to fetch direct link.")
+
+        parsed_url = urlparse(url)
+        direct_url = f"{parsed_url.scheme}://{parsed_url.netloc}{d_url}"
+        return direct_url
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {str(e)}")
+    finally:
+        session.close()
 def mediafire(url, session=None):
     if "/folder/" in url:
         return mediafireFolder(url)
