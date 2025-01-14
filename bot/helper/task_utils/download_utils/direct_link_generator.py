@@ -92,6 +92,8 @@ def direct_link_generator(link):
         return mp4upload(link)
     elif "berkasdrive.com" in domain:
         return berkasdrive(link)
+    elif "buzzheavier.com" in domain:
+        return buzzheavier(link)
     elif any(
         x in domain
         for x
@@ -1986,3 +1988,37 @@ def berkasdrive(url):
         return b64decode(link).decode("utf-8")
     else:
         raise DirectDownloadLinkException("ERROR: File Not Found!")
+
+def buzzheavier(url):
+    """
+    Generate a direct download link for buzzheavier URLs.
+    @param link: URL from buzzheavier
+    @return: Direct download link
+    """
+    session = Session()
+    if not "/download" in url:
+        url += "/download"
+
+    # Normalize URL
+    url = url.strip()
+    session.headers.update(
+        {
+            "referer": url.split("/download")[0],
+            "hx-current-url": url.split("/download")[0],
+            "hx-request": "true",
+            "priority": "u=1, i",
+        }
+    )
+    try:
+        response = session.get(url)
+        d_url = response.headers.get("Hx-Redirect")
+
+        if not d_url:
+            raise DirectDownloadLinkException("ERROR: Failed to fetch direct link.")
+        parsed_url = urlparse(url)
+        direct_url = f"{parsed_url.scheme}://{parsed_url.netloc}{d_url}"
+        return direct_url
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {str(e)}")
+    finally:
+        session.close()
