@@ -1164,22 +1164,11 @@ async def edit_bot_settings(client, query):
 
 
 @new_task
-async def bot_settings(client, message):
-    uid = message.from_user.id
-    await client.stop_listening(
-        chat_id=message.chat.id,
-        user_id=uid
-    )
-    (
-        msg,
-        button
-    ) = await get_buttons(id=uid)
+async def bot_settings(_, message):
+    handler_dict[message.chat.id] = False
+    msg, button = await get_buttons()
     globals()["start"] = 0
-    await send_message(
-        message,
-        msg,
-        button
-    )
+    await send_message(message, msg, button)
 
 
 async def load_config():
