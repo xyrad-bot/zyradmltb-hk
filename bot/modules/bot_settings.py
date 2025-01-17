@@ -353,6 +353,7 @@ async def update_buttons(message, key=None, edit_type=None):
 
 @new_task
 async def edit_variable(message, pre_message, key):
+    handler_dict[message.chat.id] = False
     value = message.text
     if value.lower() == "true":
         value = True
@@ -496,6 +497,7 @@ async def edit_variable(message, pre_message, key):
 
 @new_task
 async def edit_aria(message, pre_message, key):
+    handler_dict[message.chat.id] = False
     value = message.text
     if key == "newkey":
         key, value = [
@@ -542,6 +544,7 @@ async def edit_aria(message, pre_message, key):
 
 @new_task
 async def edit_qbit(message, pre_message, key):
+    handler_dict[message.chat.id] = False
     value = message.text
     if value.lower() == "true":
         value = True
@@ -569,6 +572,7 @@ async def edit_qbit(message, pre_message, key):
 
 @new_task
 async def update_private_file(message, pre_message):
+    handler_dict[message.chat.id] = False
     if not message.media and (file_name := message.text):
         fn = file_name.rsplit(
             ".zip",
