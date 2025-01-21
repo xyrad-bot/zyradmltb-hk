@@ -445,6 +445,7 @@ class TaskListener(TaskConfig):
             f"\n<b>cc</b>: <i>{self.tag}</i>"
         )
         gmsg = f"\n<b>Hey {self.tag}!\nYour job is done.</b>"
+        dmsg = f"\n\n<b><i>This link is not permanent and can be delete anytime!</i></b>"
         msg = (
             f"\n\n<code>Size  </code>: {get_readable_file_size(self.size)}"
             f"\n<code>Past  </code>: {get_readable_time(time() - self.time)}"
@@ -638,7 +639,7 @@ class TaskListener(TaskConfig):
                 if self.dm_message:
                     await send_message(
                         self.dm_message,
-                        lmsg + msg + _msg,
+                        lmsg + msg + _msg + dmsg,
                         buttons.build_menu(2)
                     )
                     await send_message(
@@ -674,7 +675,7 @@ class TaskListener(TaskConfig):
                     )
                     await send_message(
                         self.dm_message,
-                        lmsg + msg + _msg
+                        lmsg + msg + _msg + dmsg
                     )
                 else:
                     await send_message(
