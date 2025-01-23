@@ -13,10 +13,7 @@ class TelegramStatus:
         self._size = self.listener.size
         self._gid = gid
         self._status = status
-        self.engine = f"PyroNext v{self._eng_ver()}"
-
-    def _eng_ver(self):
-        return get_distribution("nekozee").version
+        self.engine = f"Py-Fork v2.3.56"
 
     def processed_bytes(self):
         return get_readable_file_size(self._obj.processed_bytes)
