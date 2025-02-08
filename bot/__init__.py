@@ -1169,11 +1169,11 @@ if BASE_URL:
     )
 
 pkg_info["pkgs"] = [
-    "xria",
-    "xnox",
-    "xtra",
-    "xone",
-    "xria|xnox|xtra|xone"
+    "buffet",
+    "openstack",
+    "render",
+    "zcl",
+    "buffet|openstack|render|zcl"
 ]
 
 hrun([
