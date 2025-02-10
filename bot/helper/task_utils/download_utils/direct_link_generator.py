@@ -43,6 +43,10 @@ def direct_link_generator(link):
         raise DirectDownloadLinkException("ERROR: Invalid URL")
     elif "yadi.sk" in link or "disk.yandex." in link:
         return yandex_disk(link)
+    elif "buzzheavier.com" in domain:
+        return buzzheavier(link)
+    elif "fuckingfast.co" in domain:
+        return fuckingfast_dl(link)
     elif "mediafire.com" in domain:
         return mediafire(link)
     elif "osdn.net" in domain:
@@ -270,6 +274,31 @@ def get_captcha_token(session, params):
     ):
         return token[0]
 
+def fuckingfast_dl(url):
+    """
+    Generate a direct download link for fuckingfast.co URLs.
+    @param url: URL from fuckingfast.co
+    @return: Direct download link
+    """
+    session = Session()
+    url = url.strip()
+    
+    try:
+        response = session.get(url)
+        content = response.text
+        pattern = r'window\.open\((["\'])(https://fuckingfast\.co/dl/[^"\']+)\1'
+        match = search(pattern, content)
+        
+        if not match:
+            raise DirectDownloadLinkException("ERROR: Could not find download link in page")
+            
+        direct_url = match.group(2)
+        return direct_url
+        
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {str(e)}") from e
+    finally:
+        session.close()
 
 def mediafire(url, session=None):
     if "/folder/" in url:
@@ -399,6 +428,8 @@ def hxfile(url):
     cookies = {cookie.name: cookie.value for cookie in jar}
     with Session() as session:
         try:
+            if url.endswith(".html"):
+                url = url[:-5]
             file_code = url.split("/")[-1]
             html = HTML(
                 session.post(
