@@ -254,7 +254,7 @@ async def get_readable_message(
             else f"<b>{escape(f'{task.name()}')}</b>"
         )
 
-        msg += f"<b>{index + start_position}.{tstatus}: </b><code>{task_name}</code>"
+        msg += f"<b>{index + start_position}.{tstatus}: </b><code>{task_name}</code>\n"
 
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,

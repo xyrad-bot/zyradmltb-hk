@@ -509,7 +509,7 @@ class TaskListener(TaskConfig):
                 if not files:
                     await send_message(
                         self.message, # type: ignore
-                        gmsg + msg + msg_
+                        gmsg + msg_
                     )
                     if self.log_message:
                         await send_message(
@@ -522,7 +522,7 @@ class TaskListener(TaskConfig):
                 ):
                     await send_message(
                         self.message, # type: ignore
-                        gmsg + msg + msg_
+                        gmsg + msg_
                     )
                     if self.log_message:
                         await send_message(
@@ -555,7 +555,7 @@ class TaskListener(TaskConfig):
                             )
                         await send_message(
                             self.message, # type: ignore
-                            gmsg + msg + msg_
+                            gmsg + msg_
                         )
         else:
             msg += f"\n<code>Type  </code>: {mime_type}"
@@ -671,7 +671,7 @@ class TaskListener(TaskConfig):
                 if self.dm_message:
                     await send_message(
                         self.message, # type: ignore
-                        gmsg + msg + msg_
+                        gmsg + msg_
                     )
                     await send_message(
                         self.dm_message,
