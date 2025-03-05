@@ -1,6 +1,6 @@
 from html import escape
 from math import e
-from psutil import (
+from psutil import ( # type: ignore
     virtual_memory,
     cpu_percent,
     disk_usage
@@ -254,7 +254,7 @@ async def get_readable_message(
             else f"<b>{escape(f'{task.name()}')}</b>"
         )
 
-        msg += f"<pre language=ZyradaexLeech>{index + start_position}.{task_name}</pre>"
+        msg += f"<b>{index + start_position}.{tstatus}: </b><code>{task_name}</code>"
 
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
@@ -269,7 +269,6 @@ async def get_readable_message(
             )
             msg += (
                 f"\n{get_progress_bar_string(progress)} » <b><i>{progress}</i></b>"
-                f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Done   :</code> {task.processed_bytes()} of {task.size()}"
                 f"\n<code>Speed  :</code> {task.speed()}"
                 f"\n<code>ETA    :</code> {task.eta()}"
@@ -284,7 +283,7 @@ async def get_readable_message(
             ):
                 try:
                     if playlist := task.playList():
-                        msg += f"\n<code>YtList :</code> {playlist}"
+                        msg += f"\n<code>PyList :</code> {playlist}"
                 except:
                     pass
             if hasattr(
@@ -305,7 +304,6 @@ async def get_readable_message(
             )
         else:
             msg += (
-                f"\n<code>Status :</code> <b>{tstatus}</b>"
                 f"\n<code>Size   :</code> {task.size()}"
                 f"\n<code>Detail :</code> {task.listener.mode}"
                 f"\n<code>Past   :</code> {elapsed}"
