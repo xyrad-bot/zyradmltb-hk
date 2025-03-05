@@ -644,7 +644,7 @@ class TaskListener(TaskConfig):
                     )
                     await send_message(
                         self.message, # type: ignore
-                        gmsg + msg + msg_
+                        gmsg + msg_
                     )
                 else:
                     await send_message(
