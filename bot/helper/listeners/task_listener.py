@@ -444,7 +444,7 @@ class TaskListener(TaskConfig):
             f"<b><i>{escape(self.name)}</i></b>"
             f"\n<b>cc</b>: <i>{self.tag}</i>"
         )
-        gmsg = f"\n<b>Hey {self.tag}!\nYour job is done.</b>"
+        gmsg = f"<b>{self.tag}\nYour {self.mode} is done!</b>"
         dmsg = f"\n\n<b><i>This link is not permanent and can be delete anytime!</i></b>"
         msg = (
             f"\n\n<code>Size  </code>: {get_readable_file_size(self.size)}"
@@ -456,12 +456,12 @@ class TaskListener(TaskConfig):
             if rclonePath == ""
             else f"\n\n<code>Path  </code>: {rclonePath}"
         )
-        msg_ = "\n\n<b><i>Link has been sent in your DM.</b></i>"
+        msg_ = "\n<b>link has been sent in your PM.</b>"
         if self.is_leech:
             msg += f"\n<code>Files </code>: {folders}\n"
             if mime_type != 0:
                 msg += f"<code>Error </code>: {mime_type}\n"
-            msg_ = "\n<b><i>Files has been sent in your DM.</b></i>"
+            msg_ = "\n<b>files has been sent in your PM.</b>"
             if not self.dm_message:
                 if not files:
                     await send_message(
